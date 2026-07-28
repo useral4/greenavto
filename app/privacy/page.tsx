@@ -4,10 +4,10 @@ export default function PrivacyPage() {
   return (
     <main className="legal-page">
       <Link className="brand" href="/">
-        <span className="brand-mark" aria-hidden="true">Г</span>
-        <span>
+        <img className="brand-logo" src="/brand-clover.webp" width="48" height="48" alt="" aria-hidden="true" />
+        <span className="brand-copy">
           <strong>ГРИНАВТО</strong>
-          <small>Аренда автовышек</small>
+          <small>Своевременная подача · Техника ведущих марок</small>
         </span>
       </Link>
       <article>

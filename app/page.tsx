@@ -1,690 +1,605 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { lifts, type Lift } from "./data/lifts";
+import { FormEvent, useEffect, useState } from "react";
+import { categories, equipment } from "./data/lifts";
 
 const phoneDisplay = "+7 (999) 008-88-84";
 const phoneHref = "tel:+79990088884";
-const whatsappHref =
-  "https://wa.me/79990088884?text=%D0%9D%D1%83%D0%B6%D0%BD%D0%B0%20%D0%B0%D0%B2%D1%82%D0%BE%D0%B2%D1%8B%D1%88%D0%BA%D0%B0.%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%BF%D0%BE%D0%B4%D0%BE%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D1%82%D0%B5%D1%85%D0%BD%D0%B8%D0%BA%D1%83.";
+const whatsappHref = "https://wa.me/79990088884";
+const telegramHref = "https://t.me/generalsite";
+const email = "greenavtospb@mail.ru";
+
+const equipmentFilters = [
+  { id: "all", label: "Все модели" },
+  { id: "lift", label: "Автовышки" },
+  { id: "crane", label: "Автокраны" },
+];
 
 const useCases = [
-  ["01", "Фасады и остекление", "Монтаж, осмотр, ремонт и мойка на высоте."],
-  ["02", "Реклама и вывески", "Установка и обслуживание наружных конструкций."],
-  ["03", "Освещение", "Монтаж светильников, опор и кабельных линий."],
-  ["04", "Деревья", "Кронирование и безопасный спил в сложных местах."],
-  ["05", "Кровельные работы", "Доступ к карнизам, водостокам и кровле."],
-  ["06", "Металлоконструкции", "Подъём специалистов и инструмента к зоне работ."],
+  ["01", "Высотные работы", "Монтаж, ремонт и обслуживание фасадов"],
+  ["02", "Подъём грузов", "Автокраны под требуемый вес и высоту"],
+  ["03", "Земляные работы", "Экскаваторы для города и сложных площадок"],
+  ["04", "Погрузка", "Погрузчики разных типов и габаритов"],
+  ["05", "Строительство", "Техника для отдельных этапов объекта"],
+  ["06", "Промышленные объекты", "Подбор парка под задачу и площадку"],
 ];
 
 const benefits = [
-  ["24/7", "Принимаем срочные заявки и работаем ночью"],
-  ["СПб + ЛО", "Подаём технику по городу и Ленинградской области"],
-  ["С оператором", "Услуга включает управление подготовленным специалистом"],
-  ["По договору", "Фиксируем согласованные условия и готовим документы"],
-  ["Под задачу", "Учитываем высоту, вылет стрелы и условия подъезда"],
-  ["Без сюрпризов", "До подачи согласовываем состав и факторы стоимости"],
+  {
+    number: "01",
+    title: "Соблюдаем сроки",
+    text: "Несём ответственность за выполнение согласованных сроков и договорённостей.",
+  },
+  {
+    number: "02",
+    title: "Быстрая подача",
+    text: "Автопарки в разных районах города помогают быстрее поставить технику на объект.",
+  },
+  {
+    number: "03",
+    title: "Широкий выбор",
+    text: "Подбираем современную спецтехнику по характеристикам, площадке и виду работ.",
+  },
+  {
+    number: "04",
+    title: "Документы и договор",
+    text: "Помогаем с необходимой документацией и фиксируем условия в договоре.",
+  },
+];
+
+const process = [
+  ["01", "Заявка", "Расскажите, где и что нужно сделать."],
+  ["02", "Подбор", "Уточним характеристики техники и условия площадки."],
+  ["03", "Расчёт", "Подтвердим подходящую машину, дату и стоимость."],
+  ["04", "Подача", "Доставим согласованную спецтехнику на объект."],
+];
+
+const works = [
+  ["01 / 04", "Высотные работы", "Автовышки", "/catalog/lift-28-hq.jpg", "Автовышка для высотных работ"],
+  ["02 / 04", "Подъём грузов", "Автокраны", "/catalog/category-crane.webp", "Автомобильный кран для подъёма грузов"],
+  ["03 / 04", "Земляные работы", "Экскаваторы", "/catalog/category-crawler-excavator.webp", "Гусеничный экскаватор для земляных работ"],
+  ["04 / 04", "Погрузочные работы", "Погрузчики", "/catalog/front-loader-hq.jpg", "Фронтальный погрузчик"],
 ];
 
 const faqs = [
-  [
-    "Как выбрать нужную высоту автовышки?",
-    "Сообщите высоту объекта, расстояние от места установки машины до рабочей зоны и характер работ. Если точных данных нет, менеджер поможет определить нужный диапазон.",
-  ],
-  [
-    "Какой минимальный срок аренды?",
-    "Минимальная смена зависит от конкретной машины и адреса подачи. Мы укажем её в расчёте после подтверждения нового прайс-листа.",
-  ],
-  [
-    "Входит ли оператор в стоимость?",
-    "Техника подаётся с оператором. Окончательный состав цены фиксируется в расчёте и договоре.",
-  ],
-  [
-    "Можно ли заказать технику ночью?",
-    "Да, заявки принимаются 24/7. Возможность срочной ночной подачи зависит от свободной техники и условий объекта.",
-  ],
-  [
-    "Работаете ли вы за пределами Санкт-Петербурга?",
-    "Да, выезжаем по Ленинградской области. Стоимость подачи зависит от расстояния и согласовывается до заказа.",
-  ],
-  [
-    "Что влияет на стоимость?",
-    "Рабочая высота, вылет стрелы, длительность смены, адрес, время подачи, ограничения подъезда и характер работ.",
-  ],
-  [
-    "Какие документы получает юридическое лицо?",
-    "Состав документов согласуется при оформлении заказа. Компания работает с наличной и безналичной оплатой.",
-  ],
-  [
-    "Можно ли работать в узком дворе?",
-    "Часто да. Пришлите адрес и фотографии подъезда — проверим габариты, место для опор и подберём компактный вариант.",
-  ],
-  [
-    "Что подготовить до приезда техники?",
-    "Освободить место установки, проверить подъезд и покрытие, обозначить рабочую зону и сообщить об ограничениях по высоте или массе.",
-  ],
-  [
-    "Можно ли срочно заказать автовышку сегодня?",
-    "Можно оставить срочную заявку. Диспетчер проверит ближайшую свободную машину и назовёт реальное время подачи.",
-  ],
+  {
+    question: "Как подобрать подходящую спецтехнику?",
+    answer:
+      "Сообщите вид работ, параметры объекта и условия подъезда. Если точных данных нет, опишите задачу — менеджер поможет определить подходящую категорию.",
+  },
+  {
+    question: "Можно заказать технику на сегодня?",
+    answer:
+      "Срочная подача зависит от свободной техники и адреса объекта. Позвоните или отправьте заявку — оперативно проверим доступность.",
+  },
+  {
+    question: "Что входит в стоимость?",
+    answer:
+      "Состав услуги, длительность смены, доставка и дополнительные условия подтверждаются при расчёте конкретной модели.",
+  },
+  {
+    question: "Выезжаете в Ленинградскую область?",
+    answer:
+      "Да. Стоимость и время подачи зависят от удалённости объекта и выбранной техники.",
+  },
+  {
+    question: "Можно работать ночью и в выходные?",
+    answer:
+      "Заявки принимаются круглосуточно. Возможность работ в конкретное время согласовывается с учётом техники, объекта и местных ограничений.",
+  },
 ];
 
 const structuredData = {
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://arenda-vyshki.pro/#organization",
-      name: "ГРИНАВТО",
-      url: "https://arenda-vyshki.pro/",
-      telephone: "+79990088884",
-      email: "greenavtospb@mail.ru",
-      areaServed: ["Санкт-Петербург", "Ленинградская область"],
-    },
-    {
-      "@type": "Service",
-      "@id": "https://arenda-vyshki.pro/#service",
-      name: "Аренда автовышек",
-      provider: { "@id": "https://arenda-vyshki.pro/#organization" },
-      areaServed: ["Санкт-Петербург", "Ленинградская область"],
-      description:
-        "Аренда автовышек с оператором для высотных работ в Санкт-Петербурге и Ленинградской области.",
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqs.map(([question, answer]) => ({
-        "@type": "Question",
-        name: question,
-        acceptedAnswer: { "@type": "Answer", text: answer },
-      })),
-    },
-  ],
+  "@type": "LocalBusiness",
+  name: "ГРИНАВТО",
+  description:
+    "Аренда спецтехники в Санкт-Петербурге и Ленинградской области.",
+  telephone: "+7-999-008-88-84",
+  email,
+  areaServed: ["Санкт-Петербург", "Ленинградская область"],
+  openingHours: "Mo-Su 00:00-23:59",
+  serviceType: "Аренда спецтехники",
 };
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [range, setRange] = useState<"all" | Lift["range"]>("all");
+  const [equipmentFilter, setEquipmentFilter] = useState("all");
   const [submitted, setSubmitted] = useState(false);
   const [cookieOpen, setCookieOpen] = useState(false);
 
   useEffect(() => {
-    if (!window.localStorage.getItem("greenauto-cookie-choice")) {
-      setCookieOpen(true);
-    }
+    setCookieOpen(localStorage.getItem("greenauto-cookie-choice") === null);
   }, []);
 
-  const filteredLifts = useMemo(
-    () => (range === "all" ? lifts : lifts.filter((lift) => lift.range === range)),
-    [range],
-  );
+  const filteredEquipment =
+    equipmentFilter === "all"
+      ? equipment
+      : equipment.filter((item) => item.kind === equipmentFilter);
 
-  function submitLead(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitted(true);
   }
 
-  function saveCookieChoice(choice: "necessary" | "analytics") {
-    window.localStorage.setItem("greenauto-cookie-choice", choice);
+  function saveCookieChoice(choice: "necessary" | "all") {
+    localStorage.setItem("greenauto-cookie-choice", choice);
     setCookieOpen(false);
   }
 
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
   return (
-    <div className="site-shell">
-      <a className="skip-link" href="#main">
-        Перейти к содержанию
-      </a>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
 
-      <header className="topbar">
-        <Link className="brand" href="/" aria-label="ГРИНАВТО — главная">
-          <span className="brand-mark" aria-hidden="true">
-            Г
-          </span>
-          <span>
+      <header className="site-header">
+        <a className="brand brand--header" href="#top" aria-label="ГРИНАВТО — на главную">
+          <img
+            className="brand-logo"
+            src="/brand-clover.webp"
+            width="48"
+            height="48"
+            alt=""
+            aria-hidden="true"
+          />
+          <span className="brand-copy">
             <strong>ГРИНАВТО</strong>
-            <small>Аренда автовышек</small>
+            <small>Своевременная подача · Техника ведущих марок</small>
           </span>
-        </Link>
+        </a>
 
-        <nav className={menuOpen ? "nav nav-open" : "nav"} aria-label="Основная навигация">
-          <a href="#fleet" onClick={() => setMenuOpen(false)}>
-            Автовышки
-          </a>
-          <a href="#prices" onClick={() => setMenuOpen(false)}>
-            Цены
-          </a>
-          <a href="#process" onClick={() => setMenuOpen(false)}>
-            Как заказать
-          </a>
-          <a href="#works" onClick={() => setMenuOpen(false)}>
-            Наши работы
-          </a>
-          <a href="#contacts" onClick={() => setMenuOpen(false)}>
-            Контакты
-          </a>
+        <nav className={menuOpen ? "main-nav main-nav--open" : "main-nav"} aria-label="Основная навигация">
+          <a href="#catalog" onClick={closeMenu}>Каталог</a>
+          <a href="#services" onClick={closeMenu}>Задачи</a>
+          <a href="#process" onClick={closeMenu}>Как работаем</a>
+          <a href="#prices" onClick={closeMenu}>Цены</a>
+          <a href="#contacts" onClick={closeMenu}>Контакты</a>
+          <a className="nav-phone" href={phoneHref}>{phoneDisplay}</a>
         </nav>
 
-        <div className="header-actions">
-          <div className="header-phone">
-            <span>
-              <i aria-hidden="true" /> Работаем 24/7
-            </span>
-            <a href={phoneHref}>{phoneDisplay}</a>
-          </div>
-          <a className="button button-small" href="#selection">
-            Заказать звонок
-          </a>
-          <button
-            className="menu-button"
-            type="button"
-            aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <span />
-            <span />
-          </button>
-        </div>
+        <a className="header-cta" href="#request">
+          Рассчитать стоимость <span aria-hidden="true">↗</span>
+        </a>
+
+        <button
+          className="menu-button"
+          type="button"
+          aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((value) => !value)}
+        >
+          <span />
+          <span />
+        </button>
       </header>
 
-      <main id="main">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <section className="hero">
-          <div className="hero-grid" aria-hidden="true" />
-          <div className="hero-copy">
-            <div className="eyebrow">
-              <span>Санкт-Петербург</span>
-              <b>и Ленинградская область</b>
-            </div>
-            <h1>
-              Автовышка
+      <main id="top">
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-photo" aria-hidden="true" />
+          <div className="hero-shade" aria-hidden="true" />
+          <div className="hero-rail" aria-hidden="true">
+            <span>24/7</span>
+          </div>
+
+          <div className="hero-content">
+            <p className="eyebrow eyebrow--light">Санкт-Петербург / Ленинградская область</p>
+            <h1 id="hero-title">
+              Аренда
               <br />
-              <em>точно под</em>
+              спецтехники
               <br />
-              вашу задачу
+              <em>без задержек</em>
             </h1>
             <p className="hero-lead">
-              Подберём рабочую высоту и проверим условия подъезда. Подача с оператором,
-              работа 24/7.
+              Автовышки, автокраны, экскаваторы и погрузчики для объектов
+              Санкт-Петербурга и Ленинградской области.
             </p>
-            <div className="hero-cta">
-              <a className="button button-primary hero-primary" href="#selection">
-                Подобрать автовышку <span aria-hidden="true">↗</span>
+            <div className="hero-actions">
+              <a className="button button--green" href="#request">
+                Подобрать технику <span aria-hidden="true">↗</span>
               </a>
-              <a className="text-link" href="#prices">
-                Посмотреть цены <span aria-hidden="true">↓</span>
+              <a className="text-link text-link--light" href={phoneHref}>
+                Позвонить <span aria-hidden="true">→</span>
               </a>
             </div>
-            <ul className="hero-facts" aria-label="Ключевые условия">
-              <li>24/7</li>
-              <li>с оператором</li>
-              <li>наличный и безналичный расчёт</li>
-              <li>документы для юрлиц</li>
-            </ul>
           </div>
 
-          <div className="machine-stage" aria-label="Анимация выезжающей автовышки">
-            <div className="height-scale" aria-hidden="true">
-              <span>45 м</span>
-              <span>30 м</span>
-              <span>18 м</span>
-              <span>0 м</span>
+          <div className="hero-stats" aria-label="Ключевая информация">
+            <div>
+              <strong>24/7</strong>
+              <span>приём заявок</span>
             </div>
-            <div className="machine-shadow" aria-hidden="true" />
-            <div className="machine" aria-hidden="true">
-              <div className="boom">
-                <div className="boom-inner" />
-                <div className="basket">
-                  <span />
-                </div>
-              </div>
-              <div className="truck-body">
-                <div className="truck-platform" />
-                <div className="truck-cab">
-                  <span className="truck-window" />
-                  <span className="truck-light" />
-                </div>
-                <div className="outrigger outrigger-left" />
-                <div className="outrigger outrigger-right" />
-                <span className="wheel wheel-left" />
-                <span className="wheel wheel-right" />
-              </div>
+            <div>
+              <strong>СПб + ЛО</strong>
+              <span>география работы</span>
             </div>
-            <div className="machine-caption">
-              <span>Точная подача</span>
-              <strong>Техника под высоту и условия объекта</strong>
+            <div>
+              <strong>1 звонок</strong>
+              <span>для подбора техники</span>
             </div>
           </div>
         </section>
 
-        <section className="selection section-pad" id="selection">
-          <div className="section-heading selection-heading">
-            <div>
-              <span className="section-kicker">Подбор за 2 минуты</span>
-              <h2>Какая автовышка вам нужна?</h2>
-            </div>
-            <p>
-              Не знаете высоту — ничего страшного. Опишите объект, и мы поможем с
-              параметрами.
+        <div className="marquee" aria-hidden="true">
+          <div className="marquee-track">
+            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
+            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
+            <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗</i>
+            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
+            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
+          </div>
+        </div>
+
+        <section className="request-section" id="request">
+          <div className="request-copy">
+            <p className="eyebrow">Быстрый подбор</p>
+            <h2>Опишите объект.<br />Остальное — <em>на нас.</em></h2>
+            <p className="section-intro">
+              Не обязательно знать конкретную модель. Нам достаточно задачи,
+              адреса объекта и основных параметров работ.
             </p>
+            <a className="big-phone" href={phoneHref}>{phoneDisplay}</a>
+            <span className="availability"><i /> На связи круглосуточно</span>
           </div>
 
-          <form className="selection-form" onSubmit={submitLead}>
+          <form className="request-form" onSubmit={handleSubmit}>
             <label>
-              Рабочая высота
-              <select name="height" defaultValue="">
-                <option value="">Не знаю — нужна консультация</option>
-                <option value="up-to-18">До 18 метров</option>
-                <option value="19-28">19–28 метров</option>
-                <option value="29-plus">29 метров и выше</option>
-              </select>
+              <span>Ваш телефон *</span>
+              <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required />
             </label>
             <label>
-              Адрес или район
-              <input name="area" placeholder="Например, Московский район" />
+              <span>Адрес или район</span>
+              <input type="text" name="address" placeholder="Например, Московский район" />
             </label>
-            <label>
-              Дата работ
-              <input name="date" type="date" />
+            <label className="form-wide">
+              <span>Что нужно сделать?</span>
+              <textarea name="task" rows={2} placeholder="Высота, дата, описание работ" />
             </label>
-            <label>
-              Телефон
-              <input
-                name="phone"
-                type="tel"
-                autoComplete="tel"
-                placeholder="+7 999 000-00-00"
-                required
-              />
-            </label>
-            <label className="wide-field">
-              Что предстоит сделать
-              <textarea
-                name="task"
-                rows={3}
-                placeholder="Опишите объект, высоту и условия подъезда"
-              />
-            </label>
-            <label className="consent-field">
+            <label className="consent">
               <input type="checkbox" required />
               <span>
-                Я принимаю{" "}
-                <Link href="/consent">условия обработки персональных данных</Link> и{" "}
-                <Link href="/privacy">политику конфиденциальности</Link>.
+                Согласен на обработку персональных данных и принимаю{" "}
+                <Link href="/consent">условия согласия</Link>
               </span>
             </label>
-            <div className="form-submit">
-              <button className="button button-primary" type="submit">
-                Рассчитать стоимость <span aria-hidden="true">↗</span>
-              </button>
-              <small>Сторонняя передача данных в этой версии не подключена.</small>
-            </div>
+            <button className="button button--dark form-wide" type="submit">
+              Отправить заявку <span aria-hidden="true">↗</span>
+            </button>
+            {submitted && (
+              <p className="form-status form-wide" role="status">
+                Заявка подготовлена. В локальной версии отправка не подключена —
+                пожалуйста, позвоните или напишите нам.
+              </p>
+            )}
           </form>
-
-          <div className={submitted ? "form-result form-result-visible" : "form-result"} aria-live="polite">
-            <div>
-              <strong>Обращение подготовлено.</strong>
-              <span>
-                Для быстрого ответа отправьте задачу диспетчеру в WhatsApp или позвоните.
-              </span>
-            </div>
-            <a className="button button-green" href={whatsappHref} target="_blank" rel="noreferrer">
-              Открыть WhatsApp
-            </a>
-          </div>
         </section>
 
-        <section className="fleet section-pad" id="fleet">
-          <div className="section-heading">
+        <section className="catalog-section" id="catalog">
+          <div className="section-head">
             <div>
-              <span className="section-kicker">Каталог</span>
-              <h2>Выберите диапазон высоты</h2>
+              <p className="eyebrow">Каталог техники</p>
+              <h2>Весь парк<br /><em>в одном месте</em></h2>
             </div>
-            <p>
-              Модели и цены обновятся после подтверждения прайс-листа. Сейчас каталог
-              показывает структуру подбора без выдуманных характеристик.
+            <p className="section-intro">
+              Автокраны, автовышки, экскаваторы и погрузчики. Подберём технику
+              под вид работ, характеристики и условия объекта.
             </p>
           </div>
 
-          <div className="filter-row" role="group" aria-label="Фильтр по высоте">
-            {[
-              ["all", "Все"],
-              ["compact", "До 18 м"],
-              ["city", "19–28 м"],
-              ["high", "29+ м"],
-            ].map(([value, label]) => (
+          <div className="category-grid">
+            {categories.map((category, index) => (
+              <article className="category-card" key={category.id}>
+                <div className="category-media">
+                  <img
+                    src={category.image}
+                    width="560"
+                    height="560"
+                    loading="lazy"
+                    decoding="async"
+                    alt={category.alt}
+                    title={category.name}
+                  />
+                  <span>0{index + 1}</span>
+                </div>
+                <div className="category-copy">
+                  <h3>{category.name}</h3>
+                  <p>от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч</p>
+                  <a href="#request" aria-label={`Заказать: ${category.name}`}>↗</a>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="models-head">
+            <p className="eyebrow">Популярные модели</p>
+            <h3>Характеристики<br /><em>и стоимость</em></h3>
+          </div>
+
+          <div className="filters" role="group" aria-label="Фильтр популярных моделей">
+            {equipmentFilters.map((item) => (
               <button
-                className={range === value ? "filter-active" : ""}
+                key={item.id}
                 type="button"
-                key={value}
-                onClick={() => setRange(value as typeof range)}
-                aria-pressed={range === value}
+                className={equipmentFilter === item.id ? "filter filter--active" : "filter"}
+                onClick={() => setEquipmentFilter(item.id)}
               >
-                {label}
+                {item.label}
               </button>
             ))}
           </div>
 
-          <div className="fleet-grid">
-            {filteredLifts.map((lift, index) => (
-              <article className="lift-card" key={lift.id}>
-                <div className={`lift-media lift-media-${index + 1}`}>
-                  <Image
-                    src="/og.png"
-                    alt=""
-                    fill
-                    sizes="(max-width: 760px) 100vw, 33vw"
+          <div className="catalog-grid">
+            {filteredEquipment.map((item, index) => (
+              <article className={`lift-card lift-card--${item.kind}`} key={item.id}>
+                <div className="lift-visual">
+                  <img
                     className="lift-photo"
+                    src={item.image}
+                    width="720"
+                    height="792"
+                    loading="lazy"
+                    decoding="async"
+                    alt={item.alt}
+                    title={item.name}
                   />
-                  <span>Данные на проверке</span>
-                  <b>{lift.height}</b>
+                  <span className="lift-index">0{index + 1}</span>
+                  <div className="lift-height">{item.shortSpec}</div>
                 </div>
-                <div className="lift-content">
-                  <div>
-                    <span className="availability">
-                      <i aria-hidden="true" /> Наличие по запросу
-                    </span>
-                    <h3>{lift.name}</h3>
-                  </div>
+                <div className="lift-info">
+                  <p>{item.kind === "lift" ? "Автовышка" : "Автокран"}</p>
+                  <h3>{item.name}</h3>
                   <dl>
-                    <div>
-                      <dt>Рабочая высота</dt>
-                      <dd>{lift.height}</dd>
-                    </div>
-                    <div>
-                      <dt>Вылет стрелы</dt>
-                      <dd>{lift.reach}</dd>
-                    </div>
-                    <div>
-                      <dt>Люлька</dt>
-                      <dd>{lift.capacity}</dd>
-                    </div>
+                    {item.specs.map(([label, value]) => (
+                      <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+                    ))}
+                    <div><dt>Доставка</dt><dd>договорная</dd></div>
                   </dl>
-                  <p>{lift.note}</p>
-                  <div className="card-price">
-                    <span>Стоимость</span>
-                    <strong>по запросу</strong>
-                  </div>
-                  <a className="button button-outline" href="#selection">
-                    Подобрать <span aria-hidden="true">→</span>
-                  </a>
+                  <p className="model-price">от {item.price.toLocaleString("ru-RU")} ₽</p>
+                  <a className="card-link" href="#request">Заказать <span>↗</span></a>
                 </div>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="use-cases section-pad">
-          <div className="section-heading">
+        <section className="services-section" id="services">
+          <div className="section-number">02</div>
+          <div className="section-head section-head--compact">
             <div>
-              <span className="section-kicker">Задачи</span>
-              <h2>Для какой работы нужна вышка?</h2>
+              <p className="eyebrow">Решаем задачи</p>
+              <h2>Техника<br />под <em>задачу</em></h2>
             </div>
-            <a className="text-link" href="#selection">
-              Описать свою задачу <span aria-hidden="true">↗</span>
-            </a>
           </div>
-          <div className="cases-grid">
-            {useCases.map(([number, title, text]) => (
-              <article key={number}>
+          <div className="services-grid">
+            {useCases.map(([number, title, text], index) => (
+              <article className={`service-card service-card--${index + 1}`} key={title}>
                 <span>{number}</span>
-                <h3>{title}</h3>
-                <p>{text}</p>
-                <a href="#selection" aria-label={`Подобрать автовышку: ${title}`}>
-                  Подобрать <b aria-hidden="true">↗</b>
-                </a>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </div>
+                <i aria-hidden="true">↗</i>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="night-ops section-pad">
-          <div className="night-visual">
-            <Image
-              src="/og.png"
-              alt="Жёлтая автовышка с поднятой стрелой на городском объекте"
-              fill
-              sizes="(max-width: 900px) 100vw, 52vw"
-            />
-            <div className="night-stamp">
-              <span>24</span>
-              <b>часа<br />на связи</b>
+        <section className="benefits-section">
+          <div className="benefits-lead">
+            <p className="eyebrow eyebrow--green">Почему ГРИНАВТО</p>
+            <h2>Держим<br /><em>слово.</em></h2>
+            <div className="twenty-four" aria-label="24 часа 7 дней">
+              <strong>24</strong>
+              <span>/ 7</span>
             </div>
+            <p>Принимаем заявки в любое время — без обещаний, которые нельзя подтвердить.</p>
           </div>
-          <div className="night-copy">
-            <span className="section-kicker">Готовы к сложным условиям</span>
-            <h2>Подача по городу и области — днём и ночью</h2>
-            <p>
-              Сначала проверяем высоту, рабочий радиус, подъезд и место для опор. Затем
-              предлагаем подходящий класс техники и заранее согласовываем условия.
+          <div className="benefits-list">
+            {benefits.map((benefit) => (
+              <article key={benefit.number}>
+                <span>{benefit.number}</span>
+                <h3>{benefit.title}</h3>
+                <p>{benefit.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="process-section" id="process">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">Четыре шага</p>
+              <h2>От заявки<br /><em>до подачи</em></h2>
+            </div>
+            <p className="section-intro">
+              Простой сценарий без лишней бюрократии. Все параметры подтверждаем
+              до выезда техники.
             </p>
-            <div className="benefit-list">
-              {benefits.map(([title, text]) => (
-                <div key={title}>
-                  <strong>{title}</strong>
-                  <span>{text}</span>
-                </div>
-              ))}
-            </div>
           </div>
-        </section>
-
-        <section className="process section-pad" id="process">
-          <div className="section-heading">
-            <div>
-              <span className="section-kicker">Без лишней переписки</span>
-              <h2>От задачи до подачи — четыре шага</h2>
-            </div>
-          </div>
-          <ol className="process-grid">
-            {[
-              ["01", "Оставляете заявку", "Телефон, адрес и короткое описание работ."],
-              ["02", "Уточняем объект", "Высота, вылет стрелы, подъезд и место установки."],
-              ["03", "Согласовываем", "Подходящая техника, время, стоимость и документы."],
-              ["04", "Подаём автовышку", "Оператор приезжает в согласованное время."],
-            ].map(([number, title, text]) => (
-              <li key={number}>
-                <span>{number}</span>
+          <div className="process-grid">
+            {process.map(([number, title, text]) => (
+              <article key={number}>
+                <strong>{number}</strong>
                 <h3>{title}</h3>
                 <p>{text}</p>
-              </li>
+              </article>
             ))}
-          </ol>
-          <div className="process-cta">
-            <p>Расскажите, где и на какой высоте предстоит работать.</p>
-            <a className="button button-primary" href="#selection">
-              Оставить заявку <span aria-hidden="true">↗</span>
-            </a>
           </div>
         </section>
 
-        <section className="works section-pad" id="works">
-          <div className="section-heading">
-            <div>
-              <span className="section-kicker">Наши работы</span>
-              <h2>Реальные объекты — без фотобанков</h2>
-            </div>
+        <section className="works-section" id="works">
+          <div className="works-title">
+            <p className="eyebrow eyebrow--light">Направления</p>
+            <h2>Техника<br />в деле</h2>
             <p>
-              Блок подготовлен для фотографий заказчика. Кейсы появятся после передачи
-              подтверждённых материалов.
+              Основные группы техники для высотных, грузоподъёмных, земляных
+              и погрузочных работ.
             </p>
           </div>
           <div className="works-grid">
-            {["Фасадные работы", "Монтаж освещения", "Работа в узком дворе"].map(
-              (title, index) => (
-                <article key={title}>
-                  <div className="work-placeholder">
-                    <span>0{index + 1}</span>
-                    <b>Фото объекта ожидается</b>
-                  </div>
-                  <h3>{title}</h3>
-                  <p>Высота, район и модель будут добавлены после проверки кейса.</p>
-                </article>
-              ),
-            )}
+            {works.map(([number, title, place, image, alt], index) => (
+              <article className={`work-card work-card--${index + 1}`} key={number}>
+                <div className="work-placeholder">
+                  <span>{number}</span>
+                  <img
+                    src={image}
+                    width="560"
+                    height="560"
+                    loading="lazy"
+                    decoding="async"
+                    alt={alt}
+                    title={title}
+                  />
+                </div>
+                <h3>{title}</h3>
+                <p>{place}</p>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section className="prices section-pad" id="prices">
-          <div className="section-heading">
+        <section className="prices-section" id="prices">
+          <div className="section-head">
             <div>
-              <span className="section-kicker">Прайс</span>
-              <h2>Стоимость без мелкого шрифта</h2>
+              <p className="eyebrow">Стоимость</p>
+              <h2>Честный расчёт<br /><em>под объект</em></h2>
             </div>
-            <p>
-              Финальный расчёт зависит от высоты, адреса, длительности, времени подачи и
-              условий установки.
+            <p className="section-intro">
+              Используем цены из действующего каталога. Доставка рассчитывается
+              отдельно и согласовывается до подачи техники.
             </p>
           </div>
-          <div className="price-panel">
-            <div className="price-table" role="table" aria-label="Структура прайс-листа">
-              <div className="price-row price-head" role="row">
-                <span role="columnheader">Диапазон</span>
-                <span role="columnheader">Минимальная смена</span>
-                <span role="columnheader">Стоимость</span>
-                <span role="columnheader">Подача за город</span>
+          <div className="price-table">
+            {equipment.map((item, index) => (
+              <div className="price-row" key={item.id}>
+                <span>0{index + 1}</span>
+                <h3>{item.name}</h3>
+                <p>{item.shortSpec}</p>
+                <strong>от {item.price.toLocaleString("ru-RU")} ₽</strong>
+                <a href="#request" aria-label={`Узнать стоимость: ${item.name}`}>↗</a>
               </div>
-              {[
-                ["До 18 м", "уточняется", "после прайса", "по адресу"],
-                ["19–28 м", "уточняется", "после прайса", "по адресу"],
-                ["29 м и выше", "уточняется", "после прайса", "по адресу"],
-              ].map((row) => (
-                <div className="price-row" role="row" key={row[0]}>
-                  {row.map((cell, index) => (
-                    <span role="cell" key={cell}>
-                      {index === 0 ? <strong>{cell}</strong> : cell}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <aside>
-              <span className="price-badge">Прайс обновляется</span>
-              <h3>Нужна точная стоимость?</h3>
-              <p>
-                Отправьте адрес и задачу. Проверим технику и назовём расчёт до оформления.
-              </p>
-              <a className="button button-primary" href="#selection">
-                Получить расчёт <span aria-hidden="true">↗</span>
-              </a>
-            </aside>
+            ))}
           </div>
+          <p className="price-note">
+            На расчёт влияют выбранная модель, продолжительность аренды,
+            удалённость объекта, сложность подъезда и доставка.
+          </p>
         </section>
 
-        <section className="faq section-pad">
-          <div className="section-heading">
-            <div>
-              <span className="section-kicker">Коротко о важном</span>
-              <h2>Частые вопросы</h2>
-            </div>
+        <section className="faq-section" id="faq">
+          <div className="faq-heading">
+            <p className="eyebrow">Вопросы и ответы</p>
+            <h2>Коротко<br /><em>о главном</em></h2>
           </div>
           <div className="faq-list">
-            {faqs.map(([question, answer], index) => (
-              <details key={question}>
+            {faqs.map((faq, index) => (
+              <details key={faq.question}>
                 <summary>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{question}</strong>
+                  <span>0{index + 1}</span>
+                  <strong>{faq.question}</strong>
                   <i aria-hidden="true">+</i>
                 </summary>
-                <p>{answer}</p>
+                <p>{faq.answer}</p>
               </details>
             ))}
           </div>
         </section>
 
-        <section className="contacts section-pad" id="contacts">
-          <div className="contact-copy">
-            <span className="section-kicker">Диспетчерская 24/7</span>
-            <h2>Расскажите о задаче — подберём следующий шаг</h2>
+        <section className="contacts-section" id="contacts">
+          <div className="contact-kicker">
+            <p className="eyebrow eyebrow--green">Обсудим задачу?</p>
+            <span>Санкт-Петербург / ЛО</span>
+          </div>
+          <h2>Подадим<br /><em>вовремя.</em></h2>
+          <a className="contact-phone" href={phoneHref}>{phoneDisplay}</a>
+          <div className="contact-bottom">
             <p>
-              Для быстрого расчёта подготовьте адрес, желаемое время, примерную высоту и
-              фотографию места установки.
+              Напишите или позвоните — уточним параметры и предложим подходящий
+              вариант спецтехники.
             </p>
-            <a className="contact-phone" href={phoneHref}>
-              {phoneDisplay}
-            </a>
-            <div className="contact-links">
-              <a href={whatsappHref} target="_blank" rel="noreferrer">
-                WhatsApp <span aria-hidden="true">↗</span>
-              </a>
-              <a href="https://t.me/generalsite" target="_blank" rel="noreferrer">
-                Telegram <span aria-hidden="true">↗</span>
-              </a>
-              <a href="mailto:greenavtospb@mail.ru">
-                Email <span aria-hidden="true">↗</span>
-              </a>
+            <div className="contact-actions">
+              <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp ↗</a>
+              <a className="button button--outline" href={telegramHref} target="_blank" rel="noreferrer">Telegram ↗</a>
             </div>
           </div>
-          <div className="service-map" aria-label="Зона обслуживания">
-            <div className="map-ring map-ring-1" />
-            <div className="map-ring map-ring-2" />
-            <div className="map-core">
-              <span>СПб</span>
-              <b>Подача по городу</b>
-            </div>
-            <div className="map-label map-label-1">Север</div>
-            <div className="map-label map-label-2">Область</div>
-            <div className="map-label map-label-3">Юг</div>
-            <p>Точная стоимость подачи рассчитывается по адресу.</p>
+          <div className="contact-art" aria-hidden="true">
+            <span>↑</span>
+            <i />
           </div>
         </section>
       </main>
 
-      <footer className="footer">
-        <div className="footer-top">
-          <Link className="brand" href="/">
-            <span className="brand-mark" aria-hidden="true">Г</span>
-            <span>
+      <footer className="site-footer">
+        <div className="footer-brand">
+          <a className="brand" href="#top">
+            <img
+              className="brand-logo"
+              src="/brand-clover.webp"
+              width="48"
+              height="48"
+              alt=""
+              aria-hidden="true"
+            />
+            <span className="brand-copy">
               <strong>ГРИНАВТО</strong>
-              <small>Аренда автовышек</small>
+              <small>Своевременная подача · Техника ведущих марок</small>
             </span>
-          </Link>
-          <p>Санкт-Петербург и Ленинградская область · Работаем 24/7</p>
-          <a className="footer-phone" href={phoneHref}>{phoneDisplay}</a>
+          </a>
+          <p>Аренда спецтехники<br />в Санкт-Петербурге и Ленинградской области.</p>
+        </div>
+        <div className="footer-column">
+          <strong>Навигация</strong>
+          <a href="#catalog">Каталог техники</a>
+          <a href="#services">Задачи</a>
+          <a href="#process">Как работаем</a>
+          <a href="#prices">Цены</a>
+        </div>
+        <div className="footer-column">
+          <strong>Контакты</strong>
+          <a href={phoneHref}>{phoneDisplay}</a>
+          <a href={`mailto:${email}`}>{email}</a>
+          <a href={telegramHref} target="_blank" rel="noreferrer">Telegram</a>
+        </div>
+        <div className="footer-column">
+          <strong>Документы</strong>
+          <Link href="/privacy">Политика конфиденциальности</Link>
+          <Link href="/consent">Согласие на обработку данных</Link>
         </div>
         <div className="footer-bottom">
-          <span>© 2026 ГРИНАВТО. Данные компании требуют финального подтверждения.</span>
-          <div>
-            <Link href="/privacy">Политика конфиденциальности</Link>
-            <Link href="/consent">Согласие на обработку данных</Link>
-            <button type="button" onClick={() => setCookieOpen(true)}>Настройки cookie</button>
-          </div>
+          <span>© 2026 ГРИНАВТО</span>
+          <span>Для запуска необходимо добавить реквизиты оператора данных</span>
+          <a href="#top">Наверх ↑</a>
         </div>
       </footer>
 
       <div className="mobile-actions" aria-label="Быстрые действия">
         <a href={phoneHref}>Позвонить</a>
-        <a href={whatsappHref} target="_blank" rel="noreferrer">Написать</a>
-        <a href="#selection">Рассчитать</a>
+        <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
+        <a href="#request">Расчёт</a>
       </div>
 
       {cookieOpen && (
-        <div className="cookie-banner" role="dialog" aria-label="Настройки cookie" aria-live="polite">
+        <aside className="cookie-banner" aria-label="Настройки cookie">
           <div>
-            <strong>Настройки конфиденциальности</strong>
+            <strong>Cookie и приватность</strong>
             <p>
-              Сейчас сайт использует только необходимые локальные настройки. Аналитика не
-              подключена и не загрузится без отдельного согласия.
+              Используем необходимые настройки для работы сайта. Необязательная
+              аналитика в этой версии не подключена.
             </p>
           </div>
           <div className="cookie-actions">
-            <button type="button" onClick={() => saveCookieChoice("necessary")}>
-              Только необходимые
-            </button>
-            <button
-              className="button button-primary"
-              type="button"
-              onClick={() => saveCookieChoice("analytics")}
-            >
-              Разрешить аналитику
-            </button>
+            <button type="button" onClick={() => saveCookieChoice("necessary")}>Только необходимые</button>
+            <button type="button" onClick={() => saveCookieChoice("all")}>Принять</button>
           </div>
-        </div>
+        </aside>
       )}
-    </div>
+    </>
   );
 }

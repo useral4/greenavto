@@ -4,10 +4,10 @@ export default function ConsentPage() {
   return (
     <main className="legal-page">
       <Link className="brand" href="/">
-        <span className="brand-mark" aria-hidden="true">Г</span>
-        <span>
+        <img className="brand-logo" src="/brand-clover.webp" width="48" height="48" alt="" aria-hidden="true" />
+        <span className="brand-copy">
           <strong>ГРИНАВТО</strong>
-          <small>Аренда автовышек</small>
+          <small>Своевременная подача · Техника ведущих марок</small>
         </span>
       </Link>
       <article>
@@ -31,7 +31,7 @@ export default function ConsentPage() {
         </ul>
         <h2>Цели</h2>
         <p>
-          Обратная связь, подбор автовышки, расчёт стоимости, подготовка предложения и
+          Обратная связь, подбор спецтехники, расчёт стоимости, подготовка предложения и
           оформление договора по инициативе пользователя.
         </p>
         <h2>Действия с данными</h2>
