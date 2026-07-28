@@ -6,16 +6,16 @@ services:
     staticPublishPath: ./dist/client
     autoDeploy: true
     routes:
-      - type: rewrite
+      - type: redirect
         source: /privacy
         destination: /privacy.html
-      - type: rewrite
+      - type: redirect
         source: /privacy/
         destination: /privacy.html
-      - type: rewrite
+      - type: redirect
         source: /consent
         destination: /consent.html
-      - type: rewrite
+      - type: redirect
         source: /consent/
         destination: /consent.html
       - type: rewrite
