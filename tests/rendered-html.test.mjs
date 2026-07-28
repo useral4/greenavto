@@ -17,8 +17,8 @@ async function readStaticPage(relativePath) {
 test("exports every public route as static HTML", async () => {
   const pages = [
     "index.html",
-    path.join("privacy", "index.html"),
-    path.join("consent", "index.html"),
+    "privacy.html",
+    "consent.html",
     "404.html",
   ];
 
@@ -34,8 +34,8 @@ test("exports every public route as static HTML", async () => {
 test("all local links and assets in exported HTML resolve", async () => {
   const pagePaths = [
     "index.html",
-    path.join("privacy", "index.html"),
-    path.join("consent", "index.html"),
+    "privacy.html",
+    "consent.html",
     "404.html",
   ];
   const references = new Set();
@@ -50,8 +50,10 @@ test("all local links and assets in exported HTML resolve", async () => {
   for (const reference of references) {
     const relativePath = reference.slice(1);
     const candidate =
-      path.extname(relativePath) === ""
-        ? path.join(staticRoot, relativePath, "index.html")
+      relativePath === ""
+        ? path.join(staticRoot, "index.html")
+        : path.extname(relativePath) === ""
+          ? path.join(staticRoot, `${relativePath}.html`)
         : path.join(staticRoot, relativePath);
     await access(candidate);
   }
