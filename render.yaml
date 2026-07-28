@@ -1,9 +1,7 @@
 services:
   - type: web
-    name: greenauto-vyshki
-    runtime: node
-    plan: free
+    name: greenavto
+    runtime: static
     buildCommand: npm ci && npm run build
-    startCommand: npm run start
-    healthCheckPath: /
+    staticPublishPath: ./dist/client
     autoDeploy: true
