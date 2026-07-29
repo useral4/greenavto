@@ -28,7 +28,7 @@ test("exports every public route as static HTML", async () => {
   assert.match(home, /<html lang="ru">/);
   assert.match(home, /<title>Аренда спецтехники[^<]*ГРИНАВТО<\/title>/);
   assert.match(home, /https:\/\/greenavto\.onrender\.com\/og-green\.png/);
-  assert.match(home, /<form class="request-form"(?:\s[^>]*)?>/);
+  assert.match(home, /<form class="request-form">/);
 });
 
 test("all local links and assets in exported HTML resolve", async () => {
