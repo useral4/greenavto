@@ -140,7 +140,7 @@ export default function Home() {
       />
 
       <header className="site-header">
-        <a className="brand brand--header" href="#top" aria-label="ГРИНАВТО — на главную">
+        <Link className="brand brand--header" href="/" aria-label="ГРИНАВТО — на главную">
           <img
             className="brand-logo"
             src="/brand-clover.webp"
@@ -153,14 +153,14 @@ export default function Home() {
             <strong>ГРИНАВТО</strong>
             <small>Своевременная подача · Техника ведущих марок</small>
           </span>
-        </a>
+        </Link>
 
         <nav className={menuOpen ? "main-nav main-nav--open" : "main-nav"} aria-label="Основная навигация">
-          <a href="#catalog" onClick={closeMenu}>Каталог</a>
-          <a href="#services" onClick={closeMenu}>Задачи</a>
-          <a href="#process" onClick={closeMenu}>Как работаем</a>
-          <a href="#prices" onClick={closeMenu}>Цены</a>
-          <a href="#contacts" onClick={closeMenu}>Контакты</a>
+          <Link href="/katalog-tekhniki" onClick={closeMenu}>Каталог</Link>
+          <Link href="/services" onClick={closeMenu}>Услуги</Link>
+          <Link href="/o-kompanii" onClick={closeMenu}>Компания</Link>
+          <Link href="/o-kompanii/stati-i-sovety" onClick={closeMenu}>Статьи</Link>
+          <Link href="/kontakty" onClick={closeMenu}>Контакты</Link>
           <a className="nav-phone" href={phoneHref}>{phoneDisplay}</a>
         </nav>
 
@@ -538,7 +538,7 @@ export default function Home() {
 
       <footer className="site-footer">
         <div className="footer-brand">
-          <a className="brand" href="#top">
+          <Link className="brand" href="/">
             <img
               className="brand-logo"
               src="/brand-clover.webp"
@@ -551,15 +551,15 @@ export default function Home() {
               <strong>ГРИНАВТО</strong>
               <small>Своевременная подача · Техника ведущих марок</small>
             </span>
-          </a>
+          </Link>
           <p>Аренда спецтехники<br />в Санкт-Петербурге и Ленинградской области.</p>
         </div>
         <div className="footer-column">
           <strong>Навигация</strong>
-          <a href="#catalog">Каталог техники</a>
-          <a href="#services">Задачи</a>
-          <a href="#process">Как работаем</a>
-          <a href="#prices">Цены</a>
+          <Link href="/katalog-tekhniki">Каталог техники</Link>
+          <Link href="/services">Услуги</Link>
+          <Link href="/o-kompanii">О компании</Link>
+          <Link href="/price">Цены</Link>
         </div>
         <div className="footer-column">
           <strong>Контакты</strong>
