@@ -20,6 +20,17 @@ const sourcePagePaths = sourceData.pages.map(
   (page) => `${page.path.replace(/^\//, "")}/index.html`,
 );
 
+const serviceRoutes = [
+  "/services/razrabotka-kotlovana-shpuntovanie",
+  "/services/planirovka-zemli",
+  "/services/burenie",
+  "/services/vyvoz-grunta",
+  "/services/vyvoz-spila",
+  "/services/vyvoz-stroitelnogo-musora",
+  "/services/arenda-avtovyshek",
+  "/services/perevozka-sypuchih-materilov",
+];
+
 const publicPagePaths = [
   "index.html",
   "privacy/index.html",
@@ -52,6 +63,19 @@ test("exports every public route as static HTML", async () => {
     sourcePagePaths.find((page) => page.includes("/stati-i-sovety/")) ?? "",
   );
   assert.match(article, /class="source-article"/);
+
+  const services = await readStaticPage("services/index.html");
+  assert.match(services, /class="source-services-grid"/);
+  assert.match(services, /class="services-menu-panel"/);
+  assert.match(services, /\/source\/c30ee07abb879cef\.webp/);
+  for (const route of serviceRoutes) {
+    assert.match(services, new RegExp(`href="${route}"`));
+  }
+
+  const serviceDetail = await readStaticPage(
+    "services/razrabotka-kotlovana-shpuntovanie/index.html",
+  );
+  assert.match(serviceDetail, /\/source\/c30ee07abb879cef\.webp/);
 });
 
 test("all local links and assets in exported HTML resolve", async () => {

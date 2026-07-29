@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
+import { ServicesMenu } from "./components/services-menu";
 import { categories, equipment } from "./data/lifts";
+import { serviceItems } from "./data/services";
 
 const phoneDisplay = "+7 (999) 008-88-84";
 const phoneHref = "tel:+79990088884";
@@ -14,17 +16,6 @@ const equipmentFilters = [
   { id: "all", label: "Все модели" },
   { id: "lift", label: "Автовышки" },
   { id: "crane", label: "Автокраны" },
-];
-
-const useCases = [
-  ["01", "Разработка котлована", "Земляные работы и шпунтование под параметры объекта", "/services/razrabotka-kotlovana-shpuntovanie"],
-  ["02", "Планировка земли", "Выравнивание и подготовка площадки спецтехникой", "/services/planirovka-zemli"],
-  ["03", "Бурение", "Скважины и лидерное бурение для строительных задач", "/services/burenie"],
-  ["04", "Вывоз грунта", "Погрузка и вывоз грунта с территории объекта", "/services/vyvoz-grunta"],
-  ["05", "Вывоз спила", "Уборка веток, древесины и остатков после расчистки", "/services/vyvoz-spila"],
-  ["06", "Строительный мусор", "Вывоз и утилизация строительных отходов", "/services/vyvoz-stroitelnogo-musora"],
-  ["07", "Аренда автовышек", "Высотные работы с техникой нужной высоты", "/services/arenda-avtovyshek"],
-  ["08", "Перевозка материалов", "Доставка сыпучих строительных материалов", "/services/perevozka-sypuchih-materilov"],
 ];
 
 const offers = [
@@ -229,7 +220,7 @@ export default function Home() {
 
         <nav className={menuOpen ? "main-nav main-nav--open" : "main-nav"} aria-label="Основная навигация">
           <Link href="/katalog-tekhniki" onClick={closeMenu}>Каталог</Link>
-          <Link href="/services" onClick={closeMenu}>Услуги</Link>
+          <ServicesMenu />
           <Link href="/o-kompanii" onClick={closeMenu}>Компания</Link>
           <Link href="/o-kompanii/stati-i-sovety" onClick={closeMenu}>Статьи</Link>
           <Link href="/kontakty" onClick={closeMenu}>Контакты</Link>
@@ -470,12 +461,12 @@ export default function Home() {
             </div>
           </div>
           <div className="services-grid">
-            {useCases.map(([number, title, text, href], index) => (
-              <Link className={`service-card service-card--${index + 1}`} href={href} key={title}>
-                <span>{number}</span>
+            {serviceItems.map((service, index) => (
+              <Link className={`service-card service-card--${index + 1}`} href={service.href} key={service.href}>
+                <span>{service.number}</span>
                 <div>
-                  <h3>{title}</h3>
-                  <p>{text}</p>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
                 </div>
                 <i aria-hidden="true">↗</i>
               </Link>

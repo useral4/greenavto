@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ServicesMenu } from "../components/services-menu";
+import { serviceItems } from "../data/services";
 import sourceData from "../data/source-pages.json";
 
 type ContentBlock = {
@@ -78,6 +80,13 @@ function cleanTitle(title: string) {
 }
 
 function getDisplayTitle(page: SourcePage) {
+  if (page.path === "/services") return "Услуги спецтехники";
+
+  const matchedService = serviceItems.find(
+    (service) => service.href === page.path,
+  );
+  if (matchedService) return matchedService.title;
+
   const heading = page.blocks.find(
     (block) => block.kind === "heading" && block.text.length > 5,
   );
@@ -96,15 +105,11 @@ function isBreadcrumb(block: ContentBlock) {
   );
 }
 
-function contentFor(page: SourcePage, displayTitle: string) {
+function contentFor(page: SourcePage) {
   let skippedTitle = false;
   return page.blocks.filter((block) => {
     if (isBreadcrumb(block)) return false;
-    if (
-      !skippedTitle &&
-      block.kind === "heading" &&
-      block.text.trim() === displayTitle.trim()
-    ) {
+    if (!skippedTitle && block.kind === "heading") {
       skippedTitle = true;
       return false;
     }
@@ -119,6 +124,24 @@ function imagesFor(page: SourcePage) {
     seen.add(image.src);
     return true;
   });
+
+  if (page.path === "/services") {
+    return serviceItems.map((service) => ({
+      src: service.image,
+      alt: service.alt,
+    }));
+  }
+
+  const matchedService = serviceItems.find(
+    (service) => service.href === page.path,
+  );
+  if (matchedService) {
+    return [
+      { src: matchedService.image, alt: matchedService.alt },
+      ...images.filter((image) => image.src !== matchedService.image),
+    ];
+  }
+
   return images.length ? images : [fallbackImages[page.type]];
 }
 
@@ -193,12 +216,13 @@ export default async function ImportedSourcePage({
   if (!page) notFound();
 
   const displayTitle = getDisplayTitle(page);
-  const content = contentFor(page, displayTitle);
+  const content = contentFor(page);
   const images = imagesFor(page);
   const heroImage = images[0];
   const gallery = images.slice(1, 13);
   const breadcrumbs = getBreadcrumbs(page);
   const related = getRelated(page);
+  const isServicesIndex = page.path === "/services";
 
   return (
     <div className="source-page">
@@ -220,7 +244,7 @@ export default async function ImportedSourcePage({
 
         <nav className="source-nav" aria-label="Основная навигация">
           <Link href="/katalog-tekhniki">Каталог</Link>
-          <Link href="/services">Услуги</Link>
+          <ServicesMenu />
           <Link href="/o-kompanii">Компания</Link>
           <Link href="/o-kompanii/stati-i-sovety">Статьи</Link>
           <Link href="/kontakty">Контакты</Link>
@@ -237,7 +261,7 @@ export default async function ImportedSourcePage({
             <p className="source-kicker">{typeLabels[page.type]} · СПб и ЛО</p>
             <nav className="source-breadcrumbs" aria-label="Хлебные крошки">
               <Link href="/">Главная</Link>
-              {breadcrumbs.map((crumb, index) => (
+              {breadcrumbs.map((crumb) => (
                 <span key={crumb.href}>
                   <i aria-hidden="true">/</i>
                   {crumb.linked ? (
@@ -286,9 +310,42 @@ export default async function ImportedSourcePage({
           <span><strong>1 звонок</strong> для подбора техники</span>
         </div>
 
+        {isServicesIndex && (
+          <section className="source-services-index" aria-labelledby="services-index-title">
+            <div className="source-services-heading">
+              <span>02 / Все услуги</span>
+              <div>
+                <h2 id="services-index-title">Работы на вашем объекте</h2>
+                <p>Подберём технику, экипаж и состав работ под задачу в Санкт-Петербурге и Ленинградской области.</p>
+              </div>
+            </div>
+            <div className="source-services-grid">
+              {serviceItems.map((service) => (
+                <Link href={service.href} key={service.href}>
+                  <figure>
+                    <img
+                      src={service.image}
+                      alt={service.alt}
+                      width="1000"
+                      height="700"
+                      loading="lazy"
+                    />
+                    <span>{service.number}</span>
+                  </figure>
+                  <div>
+                    <h2>{service.title}</h2>
+                    <p>{service.description}</p>
+                    <i aria-hidden="true">↗</i>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section className="source-content">
           <aside className="source-content-aside">
-            <span className="source-index">02</span>
+            <span className="source-index">{isServicesIndex ? "03" : "02"}</span>
             <p>{typeLabels[page.type]}</p>
             <a href={phoneHref}>{phoneDisplay}</a>
           </aside>
@@ -311,7 +368,7 @@ export default async function ImportedSourcePage({
           </article>
         </section>
 
-        {gallery.length > 0 && (
+        {gallery.length > 0 && !isServicesIndex && (
           <section className="source-gallery" aria-labelledby="source-gallery-title">
             <div className="source-section-heading">
               <span>03 / Фотографии</span>

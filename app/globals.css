@@ -169,6 +169,109 @@ summary {
   display: none;
 }
 
+.services-menu {
+  position: relative;
+}
+
+.services-menu summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.services-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.services-menu summary > span {
+  color: var(--green);
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.services-menu[open] summary > span {
+  transform: rotate(180deg);
+}
+
+.services-menu-panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 13px);
+  left: 50%;
+  width: min(430px, calc(100vw - 32px));
+  padding: 8px;
+  color: var(--paper);
+  border: 1px solid #303531;
+  background: #101311;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+  transform: translateX(-50%);
+}
+
+.services-menu-panel a {
+  position: static;
+  min-height: 49px;
+  display: grid;
+  grid-template-columns: 31px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: var(--paper);
+  border-bottom: 1px solid #292e2a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-transform: none;
+  white-space: normal;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.services-menu-panel a:last-child {
+  border-bottom: 0;
+}
+
+.services-menu-panel a::after {
+  display: none !important;
+}
+
+.services-menu-panel a > span,
+.services-menu-panel a > i {
+  color: var(--green);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.services-menu-panel a > i {
+  justify-self: end;
+  font-size: 15px;
+}
+
+.services-menu-panel a:hover,
+.services-menu-panel a:focus-visible {
+  color: var(--ink);
+  background: var(--green);
+}
+
+.services-menu-panel a:hover > span,
+.services-menu-panel a:hover > i,
+.services-menu-panel a:focus-visible > span,
+.services-menu-panel a:focus-visible > i {
+  color: var(--ink);
+}
+
+.services-menu-panel .services-menu-all {
+  background: #1e2420;
+}
+
 .header-cta {
   justify-self: end;
   display: inline-flex;
@@ -1865,6 +1968,32 @@ h2 em {
     letter-spacing: -0.045em;
   }
 
+  .main-nav .services-menu {
+    width: min(100%, 620px);
+  }
+
+  .main-nav .services-menu summary {
+    padding: 0;
+    font-size: clamp(25px, 5vw, 48px);
+    font-weight: 900;
+    letter-spacing: -0.045em;
+  }
+
+  .main-nav .services-menu-panel {
+    position: static;
+    width: 100%;
+    max-height: min(48vh, 460px);
+    margin-top: 16px;
+    overflow-y: auto;
+    transform: none;
+  }
+
+  .main-nav .services-menu-panel a {
+    min-height: 43px;
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+
   .main-nav .nav-phone {
     display: block;
     margin-top: 20px;
@@ -2527,6 +2656,22 @@ h2 em {
   padding: 12px 0;
 }
 
+.source-nav .services-menu summary {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.source-nav .services-menu-panel a {
+  position: static;
+  min-height: 49px;
+  padding: 10px 12px;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-transform: none;
+}
+
 .source-nav a::after {
   content: "";
   position: absolute;
@@ -2553,9 +2698,9 @@ h2 em {
 }
 
 .source-hero {
-  min-height: 720px;
+  min-height: 520px;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(460px, 1.08fr);
+  grid-template-columns: minmax(0, 0.98fr) minmax(430px, 1.02fr);
   color: var(--paper);
   background: var(--ink);
 }
@@ -2565,7 +2710,7 @@ h2 em {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(64px, 8vw, 128px) clamp(28px, 5vw, 88px);
+  padding: clamp(52px, 6vw, 88px) clamp(28px, 5vw, 88px);
 }
 
 .source-kicker,
@@ -2607,10 +2752,10 @@ h2 em {
 .source-hero h1 {
   max-width: 900px;
   margin: 0;
-  font-size: clamp(46px, 5.5vw, 96px);
+  font-size: clamp(36px, 3.7vw, 64px);
   font-weight: 900;
-  line-height: 0.92;
-  letter-spacing: -0.065em;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
   overflow-wrap: anywhere;
   text-transform: uppercase;
 }
@@ -2645,7 +2790,7 @@ h2 em {
 .source-hero-media {
   position: relative;
   min-width: 0;
-  min-height: 620px;
+  min-height: 480px;
   margin: 0;
   overflow: hidden;
   border-left: 1px solid var(--line-dark);
@@ -2723,6 +2868,142 @@ h2 em {
   letter-spacing: -0.03em;
 }
 
+.source-services-index {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(78px, 8vw, 128px) clamp(24px, 5vw, 80px);
+}
+
+.source-services-heading {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.28fr) minmax(0, 0.72fr);
+  gap: clamp(40px, 8vw, 120px);
+  align-items: start;
+  margin-bottom: 52px;
+}
+
+.source-services-heading > span {
+  padding-top: 8px;
+  color: var(--green-dark);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.source-services-heading h2 {
+  max-width: 780px;
+  margin: 0;
+  font-size: clamp(36px, 4.5vw, 68px);
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.source-services-heading p {
+  max-width: 700px;
+  margin: 22px 0 0;
+  color: #545b56;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.source-services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line-light);
+  border-left: 1px solid var(--line-light);
+}
+
+.source-services-grid > a {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.43fr) minmax(0, 0.57fr);
+  color: var(--ink);
+  border-right: 1px solid var(--line-light);
+  border-bottom: 1px solid var(--line-light);
+  background: #fff;
+}
+
+.source-services-grid figure {
+  position: relative;
+  min-height: 238px;
+  margin: 0;
+  overflow: hidden;
+  background: #e5e9e5;
+}
+
+.source-services-grid figure::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(180deg, transparent 62%, rgba(9, 11, 10, 0.58));
+}
+
+.source-services-grid img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 320ms ease;
+}
+
+.source-services-grid figure > span {
+  position: absolute;
+  z-index: 1;
+  right: 14px;
+  bottom: 12px;
+  color: var(--paper);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.source-services-grid > a > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: center;
+  gap: 14px 18px;
+  padding: clamp(24px, 3vw, 44px);
+  transition: background 180ms ease;
+}
+
+.source-services-grid h2 {
+  margin: 0;
+  font-size: clamp(20px, 1.65vw, 28px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.source-services-grid p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #666d68;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.source-services-grid i {
+  color: var(--green-dark);
+  font-size: 22px;
+  font-style: normal;
+}
+
+.source-services-grid > a:hover img {
+  transform: scale(1.035);
+}
+
+.source-services-grid > a:hover > div {
+  background: var(--green);
+}
+
+.source-services-grid > a:hover p,
+.source-services-grid > a:hover i {
+  color: var(--ink);
+}
+
 .source-content {
   max-width: var(--max);
   display: grid;
@@ -2768,7 +3049,7 @@ h2 em {
 
 .source-article h2 {
   margin: 76px 0 28px;
-  font-size: clamp(32px, 4.3vw, 68px);
+  font-size: clamp(28px, 3vw, 48px);
   font-weight: 900;
   line-height: 0.98;
   letter-spacing: -0.055em;
@@ -2837,7 +3118,7 @@ h2 em {
 .source-section-heading h2 {
   max-width: 900px;
   margin: 0;
-  font-size: clamp(43px, 6vw, 92px);
+  font-size: clamp(36px, 4.5vw, 68px);
   font-weight: 900;
   line-height: 0.94;
   letter-spacing: -0.06em;
@@ -3060,19 +3341,24 @@ h2 em {
   }
 
   .source-hero-copy {
-    min-height: 580px;
+    min-height: 450px;
   }
 
   .source-hero-media {
-    min-height: 520px;
+    min-height: 420px;
     border-top: 1px solid var(--line-dark);
     border-left: 0;
   }
 
   .source-content,
-  .source-section-heading {
+  .source-section-heading,
+  .source-services-heading {
     grid-template-columns: 1fr;
     gap: 34px;
+  }
+
+  .source-services-grid {
+    grid-template-columns: 1fr;
   }
 
   .source-content-aside {
@@ -3143,13 +3429,34 @@ h2 em {
     font-size: 10px;
   }
 
+  .source-nav .services-menu {
+    position: static;
+    flex: 0 0 auto;
+  }
+
+  .source-nav .services-menu summary {
+    padding: 12px 0;
+    font-size: 10px;
+  }
+
+  .source-nav .services-menu-panel {
+    position: fixed;
+    top: 112px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: calc(100svh - 128px);
+    overflow-y: auto;
+    transform: none;
+  }
+
   .source-hero {
     min-height: 0;
   }
 
   .source-hero-copy {
     min-height: 0;
-    padding: 70px 18px 54px;
+    padding: 54px 18px 46px;
   }
 
   .source-kicker {
@@ -3161,7 +3468,7 @@ h2 em {
   }
 
   .source-hero h1 {
-    font-size: clamp(41px, 13vw, 62px);
+    font-size: clamp(34px, 10vw, 48px);
   }
 
   .source-hero-lead {
@@ -3179,7 +3486,7 @@ h2 em {
   }
 
   .source-hero-media {
-    min-height: 390px;
+    min-height: 330px;
   }
 
   .source-hero-media figcaption {
@@ -3207,6 +3514,39 @@ h2 em {
     padding: 72px 18px 90px;
   }
 
+  .source-services-index {
+    padding: 72px 18px 88px;
+  }
+
+  .source-services-heading {
+    margin-bottom: 36px;
+  }
+
+  .source-services-heading h2 {
+    font-size: 40px;
+  }
+
+  .source-services-grid > a {
+    grid-template-columns: 42% minmax(0, 58%);
+  }
+
+  .source-services-grid figure {
+    min-height: 210px;
+  }
+
+  .source-services-grid > a > div {
+    gap: 12px;
+    padding: 22px 18px;
+  }
+
+  .source-services-grid h2 {
+    font-size: 19px;
+  }
+
+  .source-services-grid p {
+    font-size: 13px;
+  }
+
   .source-content-aside {
     grid-template-columns: auto 1fr;
   }
@@ -3217,7 +3557,7 @@ h2 em {
 
   .source-article h2 {
     margin-top: 58px;
-    font-size: 38px;
+    font-size: 34px;
   }
 
   .source-article > p {
@@ -3235,7 +3575,7 @@ h2 em {
   }
 
   .source-section-heading h2 {
-    font-size: 44px;
+    font-size: 40px;
   }
 
   .source-gallery-grid,
