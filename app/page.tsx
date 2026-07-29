@@ -17,12 +17,84 @@ const equipmentFilters = [
 ];
 
 const useCases = [
-  ["01", "Высотные работы", "Монтаж, ремонт и обслуживание фасадов"],
-  ["02", "Подъём грузов", "Автокраны под требуемый вес и высоту"],
-  ["03", "Земляные работы", "Экскаваторы для города и сложных площадок"],
-  ["04", "Погрузка", "Погрузчики разных типов и габаритов"],
-  ["05", "Строительство", "Техника для отдельных этапов объекта"],
-  ["06", "Промышленные объекты", "Подбор парка под задачу и площадку"],
+  ["01", "Разработка котлована", "Земляные работы и шпунтование под параметры объекта", "/services/razrabotka-kotlovana-shpuntovanie"],
+  ["02", "Планировка земли", "Выравнивание и подготовка площадки спецтехникой", "/services/planirovka-zemli"],
+  ["03", "Бурение", "Скважины и лидерное бурение для строительных задач", "/services/burenie"],
+  ["04", "Вывоз грунта", "Погрузка и вывоз грунта с территории объекта", "/services/vyvoz-grunta"],
+  ["05", "Вывоз спила", "Уборка веток, древесины и остатков после расчистки", "/services/vyvoz-spila"],
+  ["06", "Строительный мусор", "Вывоз и утилизация строительных отходов", "/services/vyvoz-stroitelnogo-musora"],
+  ["07", "Аренда автовышек", "Высотные работы с техникой нужной высоты", "/services/arenda-avtovyshek"],
+  ["08", "Перевозка материалов", "Доставка сыпучих строительных материалов", "/services/perevozka-sypuchih-materilov"],
+];
+
+const offers = [
+  {
+    number: "01",
+    title: "Одна смена в подарок",
+    text: "При заказе двух автовышек на 10 смен и более.",
+  },
+  {
+    number: "02",
+    title: "Скидка 10%",
+    text: "При заказе техники на срок от 20 смен.",
+  },
+  {
+    number: "03",
+    title: "Два набора пиццы",
+    text: "При заказе автовышки в аренду на сумму от 50 000 ₽.",
+  },
+  {
+    number: "04",
+    title: "Первый заказ −10%",
+    text: "Специальное предложение для новых клиентов.",
+  },
+];
+
+const companyFacts = [
+  ["145+", "единиц спецтехники"],
+  ["100%", "техника проходит обслуживание"],
+  ["1 988", "довольных клиентов"],
+  ["15", "лет опыта"],
+];
+
+const testimonials = [
+  {
+    image: "/content/review-alpha.webp",
+    alt: "Егоров Семен, директор ООО «Альфа Групп»",
+    title: "Высокий уровень профессионализма",
+    text: "Компания «Альфа Групп» выражает искреннюю благодарность «ГринАвто» за длительное и взаимовыгодное сотрудничество. Благодарим за индивидуальный подход, высокий уровень профессионализма и оперативность.",
+    name: "Егоров Семен",
+    role: "Директор ООО «Альфа Групп»",
+  },
+  {
+    image: "/content/review-antarkt.webp",
+    alt: "Желяев Андрей, директор ООО «Антаркт»",
+    title: "Всё сделали раньше срока",
+    text: "Хотелось бы поблагодарить команду «ГринАвто» за ответственное отношение к работе: всё сделали раньше назначенного срока и учли пожелания. Большое спасибо — мы очень довольны.",
+    name: "Желяев Андрей",
+    role: "Директор ООО «Антаркт»",
+  },
+];
+
+const featuredArticles = [
+  {
+    href: "/o-kompanii/stati-i-sovety/kak-pravilno-zakazat-avtovyshku",
+    number: "01",
+    title: "Как правильно заказать автовышку",
+    text: "Какие параметры объекта сообщить менеджеру, чтобы техника подошла с первого раза.",
+  },
+  {
+    href: "/o-kompanii/stati-i-sovety/kak-vybrat-podkhodyashhuyu-avtovyshku",
+    number: "02",
+    title: "Как выбрать подходящую автовышку",
+    text: "Разбираемся в рабочей высоте, вылете стрелы, грузоподъёмности и подъезде.",
+  },
+  {
+    href: "/o-kompanii/stati-i-sovety/osobennosti-ekspluataczii-v-temnoe-vremya-sutok",
+    number: "03",
+    title: "Работа автовышки ночью",
+    text: "Особенности безопасной эксплуатации техники в тёмное время суток.",
+  },
 ];
 
 const benefits = [
@@ -311,7 +383,7 @@ export default function Home() {
                 <div className="category-copy">
                   <h3>{category.name}</h3>
                   <p>от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч</p>
-                  <a href="#request" aria-label={`Заказать: ${category.name}`}>↗</a>
+                  <Link href={category.href} aria-label={`Открыть раздел: ${category.name}`}>↗</Link>
                 </div>
               </article>
             ))}
@@ -362,8 +434,28 @@ export default function Home() {
                     <div><dt>Доставка</dt><dd>договорная</dd></div>
                   </dl>
                   <p className="model-price">от {item.price.toLocaleString("ru-RU")} ₽</p>
-                  <a className="card-link" href="#request">Заказать <span>↗</span></a>
+                  <Link className="card-link" href={item.href}>Подробнее <span>↗</span></Link>
                 </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="offers-section" aria-labelledby="offers-title">
+          <div className="offers-heading">
+            <p className="eyebrow eyebrow--light">Акции и специальные условия</p>
+            <h2 id="offers-title">Выгодное<br /><em>предложение</em></h2>
+            <p>
+              Условия акций подтверждаем при расчёте заказа. Предложения могут
+              суммироваться только после согласования с менеджером.
+            </p>
+          </div>
+          <div className="offers-grid">
+            {offers.map((offer) => (
+              <article key={offer.number}>
+                <span>{offer.number}</span>
+                <h3>{offer.title}</h3>
+                <p>{offer.text}</p>
               </article>
             ))}
           </div>
@@ -378,15 +470,15 @@ export default function Home() {
             </div>
           </div>
           <div className="services-grid">
-            {useCases.map(([number, title, text], index) => (
-              <article className={`service-card service-card--${index + 1}`} key={title}>
+            {useCases.map(([number, title, text, href], index) => (
+              <Link className={`service-card service-card--${index + 1}`} href={href} key={title}>
                 <span>{number}</span>
                 <div>
                   <h3>{title}</h3>
                   <p>{text}</p>
                 </div>
                 <i aria-hidden="true">↗</i>
-              </article>
+              </Link>
             ))}
           </div>
         </section>
@@ -410,6 +502,16 @@ export default function Home() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="facts-section" aria-label="ГРИНАВТО в цифрах">
+          {companyFacts.map(([value, label], index) => (
+            <article key={label}>
+              <span>0{index + 1}</span>
+              <strong>{value}</strong>
+              <p>{label}</p>
+            </article>
+          ))}
         </section>
 
         <section className="process-section" id="process">
@@ -465,6 +567,40 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="reviews-section" aria-labelledby="reviews-title">
+          <div className="reviews-head">
+            <p className="eyebrow">Отзывы клиентов</p>
+            <h2 id="reviews-title">Нам доверяют<br /><em>1 988 клиентов</em></h2>
+            <Link className="text-link" href="/o-kompanii/otzyvy-o-nas">
+              Все отзывы <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <div className="reviews-grid">
+            {testimonials.map((review, index) => (
+              <article key={review.name}>
+                <div className="review-photo">
+                  <img
+                    src={review.image}
+                    width="900"
+                    height="1100"
+                    loading="lazy"
+                    decoding="async"
+                    alt={review.alt}
+                  />
+                  <span>0{index + 1}</span>
+                </div>
+                <div className="review-copy">
+                  <p className="review-mark" aria-hidden="true">“</p>
+                  <h3>{review.title}</h3>
+                  <blockquote>{review.text}</blockquote>
+                  <strong>{review.name}</strong>
+                  <small>{review.role}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="prices-section" id="prices">
           <div className="section-head">
             <div>
@@ -491,6 +627,32 @@ export default function Home() {
             На расчёт влияют выбранная модель, продолжительность аренды,
             удалённость объекта, сложность подъезда и доставка.
           </p>
+        </section>
+
+        <section className="articles-section" aria-labelledby="articles-title">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">Статьи и советы</p>
+              <h2 id="articles-title">Полезно знать<br /><em>до заказа</em></h2>
+            </div>
+            <p className="section-intro">
+              Практические материалы по выбору, подготовке площадки и безопасной
+              эксплуатации автовышек и другой спецтехники.
+            </p>
+          </div>
+          <div className="articles-grid">
+            {featuredArticles.map((article) => (
+              <Link href={article.href} key={article.href}>
+                <span>{article.number}</span>
+                <h3>{article.title}</h3>
+                <p>{article.text}</p>
+                <i aria-hidden="true">↗</i>
+              </Link>
+            ))}
+          </div>
+          <Link className="button button--dark articles-all" href="/o-kompanii/stati-i-sovety">
+            Все статьи <span aria-hidden="true">↗</span>
+          </Link>
         </section>
 
         <section className="faq-section" id="faq">
