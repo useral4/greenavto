@@ -83,6 +83,7 @@ test("exports every public route as static HTML", async () => {
   assert.match(home, /https:\/\/greenavto\.onrender\.com\/og-green\.png/);
   assert.match(home, /<form class="request-form">/);
   assert.match(home, /Популярные модели/);
+  assert.doesNotMatch(home, /На связи круглосуточно/);
   assert.doesNotMatch(home, /Все изображения|из архива|Материалы исходного сайта/);
   for (const route of [...catalogMenuRoutes, ...serviceRoutes]) {
     assert.match(home, new RegExp(`href="${route}"`));
@@ -91,7 +92,11 @@ test("exports every public route as static HTML", async () => {
   const catalog = await readStaticPage("katalog-tekhniki/index.html");
   assert.match(catalog, /Каталог спецтехники/);
   assert.match(catalog, /class="source-page"/);
-  assert.match(catalog, /\/source\/[a-f0-9]+\.webp/);
+  assert.match(catalog, /class="catalog-index"/);
+  assert.match(catalog, /Выберите категорию/);
+  assert.match(catalog, /Популярная техника/);
+  assert.match(catalog, /Примерная стоимость аренды/);
+  assert.match(catalog, /\/catalog\/category-crane\.webp/);
 
   const article = await readStaticPage(
     sourcePagePaths.find((page) => page.includes("/stati-i-sovety/")) ?? "",
@@ -126,7 +131,9 @@ test("exports every public route as static HTML", async () => {
   );
   assert.doesNotMatch(reviews, /class="source-gallery"/);
 
-  for (const route of structuredPagePaths) {
+  for (const route of [...structuredPagePaths].filter(
+    (item) => item !== "/katalog-tekhniki",
+  )) {
     const html = await readStaticPage(`${route.slice(1)}/index.html`);
     assert.match(html, /class="source-structured"/);
     assert.doesNotMatch(
@@ -241,7 +248,7 @@ test("every imported text block and content image is rendered", async () => {
     const contentImages = page.images.filter(
       (image) => !utilityImages.has(image.src),
     );
-    if (contentImages.length > 0) {
+    if (contentImages.length > 0 && page.path !== "/katalog-tekhniki") {
       assert.match(
         html,
         /<figure class="source-hero-media(?: [^"]*)?"><img[^>]+src="\/[^"]+"/,

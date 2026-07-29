@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CatalogCalculator } from "../components/catalog-calculator";
 import { SiteNavigationLinks } from "../components/services-menu";
+import { categories, equipment } from "../data/lifts";
 import { serviceItems } from "../data/services";
 import sourceData from "../data/source-pages.json";
 import {
@@ -352,6 +354,182 @@ function StructuredContent({
   );
 }
 
+const catalogCategoryOrder = [
+  "truck-cranes",
+  "crawler-cranes",
+  "aerial-lifts",
+  "wheel-excavators",
+  "crawler-excavators",
+  "backhoe-loaders",
+  "forklifts",
+  "mini-loaders",
+  "front-loaders",
+];
+
+const catalogFeaturedOrder = [
+  "lift-12",
+  "lift-28",
+  "lift-50",
+  "crane-16",
+  "crane-25",
+  "crane-50",
+];
+
+function CatalogIndex() {
+  const orderedCategories = catalogCategoryOrder
+    .map((id) => categories.find((category) => category.id === id))
+    .filter((category) => category !== undefined);
+  const featuredEquipment = catalogFeaturedOrder
+    .map((id) => equipment.find((item) => item.id === id))
+    .filter((item) => item !== undefined);
+
+  return (
+    <div className="catalog-index">
+      <section className="catalog-index-intro">
+        <p>Аренда спецтехники · Санкт-Петербург и Ленинградская область</p>
+        <h1>Каталог спецтехники</h1>
+        <div>
+          <p>
+            Автовышки, краны, экскаваторы и погрузчики для строительных,
+            высотных, земляных и погрузочных работ.
+          </p>
+          <a href={phoneHref}>Подобрать технику ↗</a>
+        </div>
+      </section>
+
+      <section
+        className="catalog-index-categories"
+        aria-labelledby="catalog-categories-title"
+      >
+        <div className="catalog-index-heading">
+          <h2 id="catalog-categories-title">Выберите категорию</h2>
+          <p>Девять основных направлений техники в одном каталоге.</p>
+        </div>
+        <div className="catalog-index-category-grid">
+          {orderedCategories.map((category) => (
+            <Link
+              className="catalog-index-category-card"
+              href={category.href}
+              key={category.id}
+            >
+              <figure>
+                <img
+                  src={category.image}
+                  alt={category.alt}
+                  width="720"
+                  height="520"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div>
+                <h3>{category.name}</h3>
+                <p>
+                  от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч
+                </p>
+                <span>Подробнее ↗</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="catalog-index-featured"
+        aria-labelledby="catalog-featured-title"
+      >
+        <div className="catalog-index-heading">
+          <h2 id="catalog-featured-title">Популярная техника</h2>
+          <p>Характеристики и стоимость востребованных моделей.</p>
+        </div>
+        <div className="catalog-index-product-grid">
+          {featuredEquipment.map((item) => (
+            <article className="catalog-index-product-card" key={item.id}>
+              <Link href={item.href} aria-label={`Открыть: ${item.name}`}>
+                <figure>
+                  <img
+                    src={item.image}
+                    alt={item.alt}
+                    width="720"
+                    height="520"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+              </Link>
+              <div>
+                <h3>{item.name}</h3>
+                <dl>
+                  {item.specs.map(([label, value]) => (
+                    <div key={`${item.id}-${label}`}>
+                      <dt>{label}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <footer>
+                  <strong>от {item.price.toLocaleString("ru-RU")} ₽</strong>
+                  <Link href={item.href}>Заказать ↗</Link>
+                </footer>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="catalog-index-calculator-section">
+        <CatalogCalculator />
+      </section>
+
+      <section className="catalog-index-about">
+        <div>
+          <span>О каталоге</span>
+          <h2>Техника под задачу и условия объекта</h2>
+        </div>
+        <div>
+          <p>
+            В каталоге собраны модели с разной рабочей высотой,
+            грузоподъёмностью, рабочим радиусом и объёмом ковша. Это позволяет
+            подобрать машину для высотных, грузоподъёмных, земляных и
+            погрузочных работ.
+          </p>
+          <p>
+            Техника предоставляется с опытным оператором. До подачи
+            согласовываем характеристики машины, график, стоимость, условия
+            подъезда и требования рабочей площадки.
+          </p>
+        </div>
+      </section>
+
+      <section
+        className="catalog-index-benefits"
+        aria-label="Преимущества аренды в ГРИНАВТО"
+      >
+        <article>
+          <strong>01</strong>
+          <h3>Соблюдаем сроки</h3>
+          <p>Согласовываем время подачи и фиксируем договорённости.</p>
+        </article>
+        <article>
+          <strong>02</strong>
+          <h3>Быстрая подача</h3>
+          <p>Подбираем ближайшую подходящую технику под ваш объект.</p>
+        </article>
+        <article>
+          <strong>03</strong>
+          <h3>Широкий выбор</h3>
+          <p>Автовышки, краны, экскаваторы и погрузчики разных классов.</p>
+        </article>
+        <article>
+          <strong>04</strong>
+          <h3>Работа по договору</h3>
+          <p>Заранее согласовываем стоимость и условия аренды.</p>
+        </article>
+      </section>
+    </div>
+  );
+}
+
 export function generateStaticParams() {
   return pages.map((page) => ({ slug: page.slug }));
 }
@@ -407,6 +585,7 @@ export default async function ImportedSourcePage({
   const inlineImages = structuredContent?.media?.inline ?? images.slice(1, 3);
   const structuredImages = inlineImages.length > 0 ? inlineImages : [heroImage];
   const related = getRelated(page);
+  const isCatalogIndex = page.path === "/katalog-tekhniki";
   const isServicesIndex = page.path === "/services";
   const isPricePage = page.path === "/price";
   const visibleRelated = isServicesIndex
@@ -443,6 +622,10 @@ export default async function ImportedSourcePage({
       </header>
 
       <main>
+        {isCatalogIndex ? (
+          <CatalogIndex />
+        ) : (
+          <>
         <section className={`source-hero${displayTitle.length > 55 ? " source-hero--long" : ""}`}>
           <div className="source-hero-copy">
             <h1>{displayTitle}</h1>
@@ -598,6 +781,8 @@ export default async function ImportedSourcePage({
               ))}
             </div>
           </section>
+        )}
+          </>
         )}
 
         <section className="source-cta">

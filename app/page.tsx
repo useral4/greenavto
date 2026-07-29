@@ -301,7 +301,6 @@ export default function Home() {
               адреса объекта и основных параметров работ.
             </p>
             <a className="big-phone" href={phoneHref}>{phoneDisplay}</a>
-            <span className="availability"><i /> На связи круглосуточно</span>
           </div>
 
           <form className="request-form" onSubmit={handleSubmit}>
