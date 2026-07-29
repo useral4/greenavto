@@ -77,6 +77,10 @@ const utilityImages = new Set([
   "/source/256702deb12d0928.webp",
   "/source/d21f4f7c3b04c2c0.webp",
   "/source/d0836625a5bd04a0.webp",
+  "/source/13d0266a29b30ab9.webp",
+  "/source/5dfa1575e220882c.webp",
+  "/source/a0763f24b291e1a6.webp",
+  "/source/aa1095c4c14de397.webp",
 ]);
 
 const publicPagePaths = [
@@ -193,6 +197,17 @@ test("exports every public route as static HTML", async () => {
     lift45,
     /\/source\/(?:13d0266a29b30ab9|5dfa1575e220882c)\.webp/,
   );
+
+  for (const pagePath of sourcePagePaths.filter((page) =>
+    page.startsWith("katalog-tekhniki/avtovyshki/arenda-avtovyshki-"),
+  )) {
+    const html = await readStaticPage(pagePath);
+    assert.doesNotMatch(
+      html,
+      /\/source\/(?:13d0266a29b30ab9|5dfa1575e220882c|a0763f24b291e1a6|aa1095c4c14de397)\.webp/,
+      `Unexpected promotional image on ${pagePath}`,
+    );
+  }
 
   await assert.rejects(
     access(path.join(staticRoot, "katalog-tekhniki/avtokrany/index.html")),

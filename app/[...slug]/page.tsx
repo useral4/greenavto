@@ -79,6 +79,10 @@ const utilityImages = new Set([
   "/source/256702deb12d0928.webp",
   "/source/d21f4f7c3b04c2c0.webp",
   "/source/d0836625a5bd04a0.webp",
+  "/source/13d0266a29b30ab9.webp",
+  "/source/5dfa1575e220882c.webp",
+  "/source/a0763f24b291e1a6.webp",
+  "/source/aa1095c4c14de397.webp",
 ]);
 
 const fallbackImages: Record<SourcePage["type"], SourceImage> = {
