@@ -41,13 +41,6 @@ const utilityImages = new Set([
   "/source/d0836625a5bd04a0.webp",
 ]);
 
-const typeLabels: Record<SourcePage["type"], string> = {
-  catalog: "Каталог техники",
-  service: "Услуги спецтехники",
-  article: "Статьи и советы",
-  info: "ГРИНАВТО",
-};
-
 const fallbackImages: Record<SourcePage["type"], SourceImage> = {
   catalog: {
     src: "/catalog/category-lift.webp",
@@ -67,13 +60,36 @@ const fallbackImages: Record<SourcePage["type"], SourceImage> = {
   },
 };
 
+const priceRows = [
+  ["12 м", "1 375 ₽", "11 000 ₽", "50 ₽"],
+  ["15 м", "1 450 ₽", "11 600 ₽", "50 ₽"],
+  ["18 м", "1 500 ₽", "12 000 ₽", "50 ₽"],
+  ["22 м", "1 750 ₽", "14 000 ₽", "50 ₽"],
+  ["24 м", "1 875 ₽", "15 000 ₽", "50 ₽"],
+  ["25 м", "1 875 ₽", "15 000 ₽", "50 ₽"],
+  ["28 м", "2 000 ₽", "16 000 ₽", "50 ₽"],
+  ["30 м", "2 000 ₽", "18 000 ₽", "50 ₽"],
+  ["32 м", "2 125 ₽", "19 500 ₽", "50 ₽"],
+  ["35 м", "2 250 ₽", "20 000 ₽", "50 ₽"],
+  ["40 м", "2 750 ₽", "24 000 ₽", "50 ₽"],
+  ["45 м", "3 000 ₽", "26 000 ₽", "50 ₽"],
+  ["50 м", "4 000 ₽", "40 000 ₽", "50 ₽"],
+] as const;
+
+function sanitizeText(text: string) {
+  return text
+    .replace(/[█▀▄▌▐░▒▓▬]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function findPage(slug: string[]) {
   const path = `/${slug.join("/")}`;
   return pages.find((page) => page.path === path);
 }
 
 function cleanTitle(title: string) {
-  return title
+  return sanitizeText(title)
     .split("|")[0]
     .replace(/\s+[–—-]\s+(Грин ?Авто|ГРИНАВТО).*$/i, "")
     .trim();
@@ -90,7 +106,7 @@ function getDisplayTitle(page: SourcePage) {
   const heading = page.blocks.find(
     (block) => block.kind === "heading" && block.text.length > 5,
   );
-  return heading?.text ?? cleanTitle(page.title);
+  return sanitizeText(heading?.text ?? cleanTitle(page.title));
 }
 
 function isBreadcrumb(block: ContentBlock) {
@@ -107,7 +123,9 @@ function isBreadcrumb(block: ContentBlock) {
 
 function contentFor(page: SourcePage, displayTitle: string) {
   let skippedTitle = false;
-  return page.blocks.filter((block) => {
+  return page.blocks
+    .map((block) => ({ ...block, text: sanitizeText(block.text) }))
+    .filter((block) => {
     if (isBreadcrumb(block)) return false;
     if (
       !skippedTitle &&
@@ -122,6 +140,10 @@ function contentFor(page: SourcePage, displayTitle: string) {
 }
 
 function imagesFor(page: SourcePage) {
+  if (page.path === "/o-kompanii/otzyvy-o-nas") {
+    return [fallbackImages.info];
+  }
+
   const seen = new Set<string>();
   const images = page.images.filter((image) => {
     if (utilityImages.has(image.src) || seen.has(image.src)) return false;
@@ -153,24 +175,6 @@ function imagesFor(page: SourcePage) {
   }
 
   return images.length ? images : [fallbackImages[page.type]];
-}
-
-function getBreadcrumbs(page: SourcePage) {
-  const segments = page.path.split("/").filter(Boolean);
-  return segments.map((_, index) => {
-    const path = `/${segments.slice(0, index + 1).join("/")}`;
-    const linkedPage = pages.find((candidate) => candidate.path === path);
-    return {
-      href: path,
-      linked: Boolean(linkedPage) && index < segments.length - 1,
-      label:
-        linkedPage && index < segments.length - 1
-          ? cleanTitle(linkedPage.title)
-          : index === segments.length - 1
-            ? cleanTitle(page.title)
-            : segments[index].replaceAll("-", " "),
-    };
-  });
 }
 
 function getRelated(page: SourcePage) {
@@ -223,11 +227,11 @@ export async function generateMetadata({
   const image = imagesFor(page)[0];
   return {
     title: `${cleanTitle(page.title)} | ГРИНАВТО`,
-    description: page.description,
+    description: sanitizeText(page.description),
     alternates: { canonical: page.path },
     openGraph: {
       title: cleanTitle(page.title),
-      description: page.description,
+      description: sanitizeText(page.description),
       type: page.type === "article" ? "article" : "website",
       images: [{ url: image.src, alt: image.alt || cleanTitle(page.title) }],
     },
@@ -247,13 +251,9 @@ export default async function ImportedSourcePage({
   const content = contentFor(page, displayTitle);
   const images = imagesFor(page);
   const heroImage = images[0];
-  const gallery = images.slice(1);
-  const showGallery =
-    (page.type === "article" || page.type === "info") &&
-    gallery.length > 0;
-  const breadcrumbs = getBreadcrumbs(page);
   const related = getRelated(page);
   const isServicesIndex = page.path === "/services";
+  const isPricePage = page.path === "/price";
   const visibleRelated = isServicesIndex
     ? related.filter(
         (item) => !serviceItems.some((service) => service.href === item.path),
@@ -290,22 +290,8 @@ export default async function ImportedSourcePage({
       <main>
         <section className="source-hero">
           <div className="source-hero-copy">
-            <p className="source-kicker">{typeLabels[page.type]} · СПб и ЛО</p>
-            <nav className="source-breadcrumbs" aria-label="Хлебные крошки">
-              <Link href="/">Главная</Link>
-              {breadcrumbs.map((crumb) => (
-                <span key={crumb.href}>
-                  <i aria-hidden="true">/</i>
-                  {crumb.linked ? (
-                    <Link href={crumb.href}>{crumb.label}</Link>
-                  ) : (
-                    <span>{crumb.label}</span>
-                  )}
-                </span>
-              ))}
-            </nav>
             <h1>{displayTitle}</h1>
-            <p className="source-hero-lead">{page.description}</p>
+            <p className="source-hero-lead">{sanitizeText(page.description)}</p>
             <div className="source-actions">
               <a className="button button--green" href={phoneHref}>
                 Позвонить <span aria-hidden="true">↗</span>
@@ -341,7 +327,6 @@ export default async function ImportedSourcePage({
         {isServicesIndex && (
           <section className="source-services-index" aria-labelledby="services-index-title">
             <div className="source-services-heading">
-              <span>02 / Все услуги</span>
               <div>
                 <h2 id="services-index-title">Работы на вашем объекте</h2>
                 <p>Подберём технику, экипаж и состав работ под задачу в Санкт-Петербурге и Ленинградской области.</p>
@@ -358,7 +343,6 @@ export default async function ImportedSourcePage({
                       height="700"
                       loading="lazy"
                     />
-                    <span>{service.number}</span>
                   </figure>
                   <div>
                     <h2>{service.title}</h2>
@@ -372,64 +356,70 @@ export default async function ImportedSourcePage({
         )}
 
         <section className="source-content">
-          <aside className="source-content-aside">
-            <span className="source-index">{isServicesIndex ? "03" : "02"}</span>
-            <p>{typeLabels[page.type]}</p>
-            <a href={phoneHref}>{phoneDisplay}</a>
-          </aside>
-
           <article className="source-article">
-            {content.map((block, index) => {
-              if (block.kind === "heading") {
-                return <h2 key={`${block.text}-${index}`}>{block.text}</h2>;
-              }
-              if (block.kind === "list") {
-                return (
-                  <div className="source-list-item" key={`${block.text}-${index}`}>
-                    <span aria-hidden="true">↗</span>
-                    <p>{block.text}</p>
-                  </div>
-                );
-              }
-              return <p key={`${block.text}-${index}`}>{block.text}</p>;
-            })}
+            {isPricePage ? (
+              <div className="source-price">
+                <h2>Прайс-лист аренды автовышек</h2>
+                <p>
+                  Стоимость указана без НДС. Минимальный заказ — одна смена.
+                </p>
+                <div className="source-price-table-wrap">
+                  <table className="source-price-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Высота подъёма</th>
+                        <th scope="col">После смены, за час</th>
+                        <th scope="col">За смену</th>
+                        <th scope="col">За КАД, 1 км</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {priceRows.map((row) => (
+                        <tr key={row[0]}>
+                          {row.map((cell, index) =>
+                            index === 0 ? (
+                              <th scope="row" key={cell}>{cell}</th>
+                            ) : (
+                              <td key={cell}>{cell}</td>
+                            ),
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="source-price-note">
+                  Точная стоимость зависит от адреса объекта, срока аренды и
+                  выбранной модели. Уточните расчёт по телефону.
+                </p>
+              </div>
+            ) : (
+              content.map((block, index) => {
+                if (block.kind === "heading") {
+                  return <h2 key={`${block.text}-${index}`}>{block.text}</h2>;
+                }
+                if (block.kind === "list") {
+                  return (
+                    <div className="source-list-item" key={`${block.text}-${index}`}>
+                      <span aria-hidden="true" />
+                      <p>{block.text}</p>
+                    </div>
+                  );
+                }
+                return <p key={`${block.text}-${index}`}>{block.text}</p>;
+              })
+            )}
           </article>
         </section>
-
-        {showGallery && (
-          <section className="source-gallery" aria-labelledby="source-gallery-title">
-            <div className="source-section-heading">
-              <span>03 / Фотографии</span>
-              <h2 id="source-gallery-title">Техника и выполненные работы</h2>
-            </div>
-            <div className="source-gallery-grid">
-              {gallery.map((image, index) => (
-                <figure key={image.src} className={index % 5 === 0 ? "source-gallery-wide" : ""}>
-                  <img
-                    src={image.src}
-                    alt={image.alt || `${displayTitle} — фото ${index + 2}`}
-                    loading="lazy"
-                  />
-                  <figcaption>
-                    <span>{String(index + 2).padStart(2, "0")}</span>
-                    {image.alt || displayTitle}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </section>
-        )}
 
         {visibleRelated.length > 0 && (
           <section className="source-related" aria-labelledby="source-related-title">
             <div className="source-section-heading">
-              <span>04 / Продолжить</span>
               <h2 id="source-related-title">Смотрите также</h2>
             </div>
             <div className="source-related-grid">
-              {visibleRelated.map((item, index) => (
+              {visibleRelated.map((item) => (
                 <Link href={item.path} key={item.path}>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{cleanTitle(item.title)}</strong>
                   <i aria-hidden="true">↗</i>
                 </Link>

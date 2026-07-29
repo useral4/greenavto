@@ -88,6 +88,7 @@ test("exports every public route as static HTML", async () => {
     sourcePagePaths.find((page) => page.includes("/stati-i-sovety/")) ?? "",
   );
   assert.match(article, /class="source-article"/);
+  assert.doesNotMatch(article, /class="source-gallery"/);
 
   const services = await readStaticPage("services/index.html");
   assert.match(services, /class="source-services-grid"/);
@@ -101,6 +102,20 @@ test("exports every public route as static HTML", async () => {
     "services/razrabotka-kotlovana-shpuntovanie/index.html",
   );
   assert.match(serviceDetail, /\/source\/c30ee07abb879cef\.webp/);
+
+  const price = await readStaticPage("price/index.html");
+  assert.match(price, /class="source-price-table"/);
+  assert.match(price, /12 м/);
+  assert.match(price, /50 м/);
+  assert.doesNotMatch(
+    price,
+    /Введите ваш номер, чтобы мы отправили вам каталог в Whatsapp/i,
+  );
+
+  const reviews = await readStaticPage(
+    "o-kompanii/otzyvy-o-nas/index.html",
+  );
+  assert.doesNotMatch(reviews, /class="source-gallery"/);
 });
 
 function decodeHtml(value) {
@@ -126,13 +141,20 @@ function plainText(html) {
     .trim();
 }
 
+function sanitizeImportedText(value) {
+  return value
+    .replace(/[█▀▄▌▐░▒▓▬]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 test("every imported text block and content image is rendered", async () => {
   for (const page of sourceData.pages) {
     const relativePath = `${page.path.replace(/^\//, "")}/index.html`;
     const html = await readStaticPage(relativePath);
     const text = plainText(html);
 
-    for (const block of page.blocks) {
+    for (const block of page.path === "/price" ? [] : page.blocks) {
       if (
         block.kind === "list" &&
         (
@@ -144,7 +166,8 @@ test("every imported text block and content image is rendered", async () => {
       ) {
         continue;
       }
-      const expected = block.text.replace(/\s+/g, " ").trim();
+      const expected = sanitizeImportedText(block.text);
+      if (!expected) continue;
       assert.ok(
         text.includes(expected),
         `Missing text on ${page.path}: ${expected.slice(0, 80)}`,
@@ -161,13 +184,21 @@ test("every imported text block and content image is rendered", async () => {
         `Missing primary image on ${page.path}`,
       );
     }
-    if (page.type === "catalog" || page.type === "service") {
-      assert.doesNotMatch(
-        html,
-        /class="source-gallery"/,
-        `Unexpected gallery on ${page.path}`,
-      );
-    }
+    assert.doesNotMatch(
+      html,
+      /class="source-gallery"/,
+      `Unexpected gallery on ${page.path}`,
+    );
+    assert.doesNotMatch(
+      html,
+      /class="source-breadcrumbs"|class="source-content-aside"/,
+      `Unexpected imported navigation labels on ${page.path}`,
+    );
+    assert.doesNotMatch(
+      html,
+      /[█▀▄▌▐░▒▓▬]/,
+      `Unexpected source symbols on ${page.path}`,
+    );
   }
 });
 
