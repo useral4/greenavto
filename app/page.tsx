@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { categories, equipment } from "./data/lifts";
 
 const phoneDisplay = "+7 (999) 008-88-84";
@@ -103,6 +103,74 @@ const structuredData = {
   serviceType: "Аренда спецтехники",
 };
 
+function AnimatedNumber({
+  value,
+  suffix = "",
+}: {
+  value: number;
+  suffix?: string;
+}) {
+  const numberRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const element = numberRef.current;
+    if (!element) return;
+
+    const finalValue = `${value.toLocaleString("ru-RU")}${suffix}`;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      element.textContent = finalValue;
+      return;
+    }
+
+    let animationFrame = 0;
+    let started = false;
+
+    const animate = () => {
+      if (started) return;
+      started = true;
+      const startedAt = performance.now();
+      const duration = 1300;
+
+      const update = (now: number) => {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.round(value * eased);
+        element.textContent = `${currentValue.toLocaleString("ru-RU")}${suffix}`;
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(update);
+        }
+      };
+
+      element.textContent = `0${suffix}`;
+      animationFrame = requestAnimationFrame(update);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          animate();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.65 },
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [suffix, value]);
+
+  return (
+    <span className="animated-number" ref={numberRef} aria-hidden="true">
+      {value.toLocaleString("ru-RU")}{suffix}
+    </span>
+  );
+}
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [equipmentFilter, setEquipmentFilter] = useState("all");
@@ -112,6 +180,35 @@ export default function Home() {
   useEffect(() => {
     setCookieOpen(localStorage.getItem("greenauto-cookie-choice") === null);
   }, []);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    document.documentElement.classList.add("motion-ready");
+    const motionElements = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-motion]"),
+    );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("motion-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: "0px 0px -8% 0px",
+        threshold: 0.12,
+      },
+    );
+
+    motionElements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [equipmentFilter]);
 
   const filteredEquipment =
     equipmentFilter === "all"
@@ -213,7 +310,7 @@ export default function Home() {
 
           <div className="hero-stats" aria-label="Ключевая информация">
             <div>
-              <strong>24/7</strong>
+              <strong aria-label="24 часа 7 дней"><AnimatedNumber value={24} suffix="/7" /></strong>
               <span>приём заявок</span>
             </div>
             <div>
@@ -221,7 +318,7 @@ export default function Home() {
               <span>география работы</span>
             </div>
             <div>
-              <strong>1 звонок</strong>
+              <strong aria-label="1 звонок"><AnimatedNumber value={1} suffix=" звонок" /></strong>
               <span>для подбора техники</span>
             </div>
           </div>
@@ -229,16 +326,18 @@ export default function Home() {
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
-            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
-            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
-            <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗</i>
-            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
-            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
+            {[0, 1].map((group) => (
+              <div className="marquee-group" key={group}>
+                <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
+                <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
+                <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗</i>
+              </div>
+            ))}
           </div>
         </div>
 
         <section className="request-section" id="request">
-          <div className="request-copy">
+          <div className="request-copy" data-motion="from-left">
             <p className="eyebrow">Быстрый подбор</p>
             <h2>Опишите объект.<br />Остальное — <em>на нас.</em></h2>
             <p className="section-intro">
@@ -249,7 +348,7 @@ export default function Home() {
             <span className="availability"><i /> На связи круглосуточно</span>
           </div>
 
-          <form className="request-form" onSubmit={handleSubmit}>
+          <form className="request-form" data-motion="from-right" onSubmit={handleSubmit}>
             <label>
               <span>Ваш телефон *</span>
               <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required />
@@ -282,7 +381,7 @@ export default function Home() {
         </section>
 
         <section className="catalog-section" id="catalog">
-          <div className="section-head">
+          <div className="section-head" data-motion="rise">
             <div>
               <p className="eyebrow">Каталог техники</p>
               <h2>Весь парк<br /><em>в одном месте</em></h2>
@@ -295,7 +394,7 @@ export default function Home() {
 
           <div className="category-grid">
             {categories.map((category, index) => (
-              <article className="category-card" key={category.id}>
+              <article className="category-card" data-motion="card" key={category.id}>
                 <div className="category-media">
                   <img
                     src={category.image}
@@ -317,7 +416,7 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="models-head">
+          <div className="models-head" data-motion="from-left">
             <p className="eyebrow">Популярные модели</p>
             <h3>Характеристики<br /><em>и стоимость</em></h3>
           </div>
@@ -337,7 +436,7 @@ export default function Home() {
 
           <div className="catalog-grid">
             {filteredEquipment.map((item, index) => (
-              <article className={`lift-card lift-card--${item.kind}`} key={item.id}>
+              <article className={`lift-card lift-card--${item.kind}`} data-motion="card" key={item.id}>
                 <div className="lift-visual">
                   <img
                     className="lift-photo"
@@ -371,7 +470,7 @@ export default function Home() {
 
         <section className="services-section" id="services">
           <div className="section-number">02</div>
-          <div className="section-head section-head--compact">
+          <div className="section-head section-head--compact" data-motion="rise">
             <div>
               <p className="eyebrow">Решаем задачи</p>
               <h2>Техника<br />под <em>задачу</em></h2>
@@ -379,7 +478,7 @@ export default function Home() {
           </div>
           <div className="services-grid">
             {useCases.map(([number, title, text], index) => (
-              <article className={`service-card service-card--${index + 1}`} key={title}>
+              <article className={`service-card service-card--${index + 1}`} data-motion="card" key={title}>
                 <span>{number}</span>
                 <div>
                   <h3>{title}</h3>
@@ -392,18 +491,18 @@ export default function Home() {
         </section>
 
         <section className="benefits-section">
-          <div className="benefits-lead">
+          <div className="benefits-lead" data-motion="from-left">
             <p className="eyebrow eyebrow--green">Почему ГРИНАВТО</p>
             <h2>Держим<br /><em>слово.</em></h2>
             <div className="twenty-four" aria-label="24 часа 7 дней">
-              <strong>24</strong>
+              <strong><AnimatedNumber value={24} /></strong>
               <span>/ 7</span>
             </div>
             <p>Принимаем заявки в любое время — без обещаний, которые нельзя подтвердить.</p>
           </div>
           <div className="benefits-list">
             {benefits.map((benefit) => (
-              <article key={benefit.number}>
+              <article data-motion="from-right" key={benefit.number}>
                 <span>{benefit.number}</span>
                 <h3>{benefit.title}</h3>
                 <p>{benefit.text}</p>
@@ -413,7 +512,7 @@ export default function Home() {
         </section>
 
         <section className="process-section" id="process">
-          <div className="section-head">
+          <div className="section-head" data-motion="rise">
             <div>
               <p className="eyebrow">Четыре шага</p>
               <h2>От заявки<br /><em>до подачи</em></h2>
@@ -425,7 +524,7 @@ export default function Home() {
           </div>
           <div className="process-grid">
             {process.map(([number, title, text]) => (
-              <article key={number}>
+              <article data-motion="card" key={number}>
                 <strong>{number}</strong>
                 <h3>{title}</h3>
                 <p>{text}</p>
@@ -435,7 +534,7 @@ export default function Home() {
         </section>
 
         <section className="works-section" id="works">
-          <div className="works-title">
+          <div className="works-title" data-motion="from-left">
             <p className="eyebrow eyebrow--light">Направления</p>
             <h2>Техника<br />в деле</h2>
             <p>
@@ -445,7 +544,7 @@ export default function Home() {
           </div>
           <div className="works-grid">
             {works.map(([number, title, place, image, alt], index) => (
-              <article className={`work-card work-card--${index + 1}`} key={number}>
+              <article className={`work-card work-card--${index + 1}`} data-motion="card" key={number}>
                 <div className="work-placeholder">
                   <span>{number}</span>
                   <img
@@ -466,7 +565,7 @@ export default function Home() {
         </section>
 
         <section className="prices-section" id="prices">
-          <div className="section-head">
+          <div className="section-head" data-motion="rise">
             <div>
               <p className="eyebrow">Стоимость</p>
               <h2>Честный расчёт<br /><em>под объект</em></h2>
@@ -478,7 +577,7 @@ export default function Home() {
           </div>
           <div className="price-table">
             {equipment.map((item, index) => (
-              <div className="price-row" key={item.id}>
+              <div className="price-row" data-motion="from-right" key={item.id}>
                 <span>0{index + 1}</span>
                 <h3>{item.name}</h3>
                 <p>{item.shortSpec}</p>
@@ -494,13 +593,13 @@ export default function Home() {
         </section>
 
         <section className="faq-section" id="faq">
-          <div className="faq-heading">
+          <div className="faq-heading" data-motion="from-left">
             <p className="eyebrow">Вопросы и ответы</p>
             <h2>Коротко<br /><em>о главном</em></h2>
           </div>
           <div className="faq-list">
             {faqs.map((faq, index) => (
-              <details key={faq.question}>
+              <details data-motion="from-right" key={faq.question}>
                 <summary>
                   <span>0{index + 1}</span>
                   <strong>{faq.question}</strong>
