@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
-import { ServicesMenu } from "./components/services-menu";
+import { SiteNavigationLinks } from "./components/services-menu";
+import homeArchiveMedia from "./data/home-archive-media.json";
 import { categories, equipment } from "./data/lifts";
 import { serviceItems } from "./data/services";
 
@@ -191,10 +192,6 @@ export default function Home() {
     setCookieOpen(false);
   }
 
-  function closeMenu() {
-    setMenuOpen(false);
-  }
-
   return (
     <>
       <script
@@ -219,11 +216,7 @@ export default function Home() {
         </Link>
 
         <nav className={menuOpen ? "main-nav main-nav--open" : "main-nav"} aria-label="Основная навигация">
-          <Link href="/katalog-tekhniki" onClick={closeMenu}>Каталог</Link>
-          <ServicesMenu />
-          <Link href="/o-kompanii" onClick={closeMenu}>Компания</Link>
-          <Link href="/o-kompanii/stati-i-sovety" onClick={closeMenu}>Статьи</Link>
-          <Link href="/kontakty" onClick={closeMenu}>Контакты</Link>
+          <SiteNavigationLinks />
           <a className="nav-phone" href={phoneHref}>{phoneDisplay}</a>
         </nav>
 
@@ -644,6 +637,42 @@ export default function Home() {
           <Link className="button button--dark articles-all" href="/o-kompanii/stati-i-sovety">
             Все статьи <span aria-hidden="true">↗</span>
           </Link>
+        </section>
+
+        <section className="archive-media-section" aria-labelledby="archive-media-title">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow eyebrow--light">Материалы исходного сайта</p>
+              <h2 id="archive-media-title">Все изображения<br /><em>из архива</em></h2>
+            </div>
+            <p className="section-intro">
+              Фотографии техники, выполненных работ, документов и партнёров.
+              Изображения показаны компактно и не растягиваются больше исходного размера.
+            </p>
+          </div>
+          <div
+            className="archive-media-rail"
+            tabIndex={0}
+            aria-label="Галерея изображений исходного сайта"
+          >
+            {homeArchiveMedia.images.map((image, index) => (
+              <figure key={image.src}>
+                <div>
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <figcaption>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  {image.alt}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <p className="archive-media-hint">Прокрутите галерею по горизонтали →</p>
         </section>
 
         <section className="faq-section" id="faq">

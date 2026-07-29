@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ServicesMenu } from "../components/services-menu";
+import { SiteNavigationLinks } from "../components/services-menu";
 import { serviceItems } from "../data/services";
 import sourceData from "../data/source-pages.json";
 
@@ -105,11 +105,15 @@ function isBreadcrumb(block: ContentBlock) {
   );
 }
 
-function contentFor(page: SourcePage) {
+function contentFor(page: SourcePage, displayTitle: string) {
   let skippedTitle = false;
   return page.blocks.filter((block) => {
     if (isBreadcrumb(block)) return false;
-    if (!skippedTitle && block.kind === "heading") {
+    if (
+      !skippedTitle &&
+      block.kind === "heading" &&
+      block.text.trim() === displayTitle.trim()
+    ) {
       skippedTitle = true;
       return false;
     }
@@ -126,10 +130,16 @@ function imagesFor(page: SourcePage) {
   });
 
   if (page.path === "/services") {
-    return serviceItems.map((service) => ({
-      src: service.image,
-      alt: service.alt,
-    }));
+    return [
+      ...serviceItems.map((service) => ({
+        src: service.image,
+        alt: service.alt,
+      })),
+      ...images.filter(
+        (image) =>
+          !serviceItems.some((service) => service.image === image.src),
+      ),
+    ];
   }
 
   const matchedService = serviceItems.find(
@@ -164,6 +174,24 @@ function getBreadcrumbs(page: SourcePage) {
 }
 
 function getRelated(page: SourcePage) {
+  const children = pages.filter(
+    (candidate) =>
+      candidate.path !== page.path &&
+      candidate.path.split("/").slice(0, -1).join("/") === page.path,
+  );
+  if (children.length > 0) {
+    if (page.path === "/o-kompanii/stati-i-sovety") {
+      const detachedArticles = pages.filter(
+        (candidate) =>
+          candidate.type === "article" &&
+          candidate.path !== page.path &&
+          !children.some((child) => child.path === candidate.path),
+      );
+      return [...children, ...detachedArticles];
+    }
+    return children;
+  }
+
   const parent = page.path.split("/").slice(0, -1).join("/") || "/";
   const sameParent = pages.filter(
     (candidate) =>
@@ -216,13 +244,18 @@ export default async function ImportedSourcePage({
   if (!page) notFound();
 
   const displayTitle = getDisplayTitle(page);
-  const content = contentFor(page);
+  const content = contentFor(page, displayTitle);
   const images = imagesFor(page);
   const heroImage = images[0];
-  const gallery = images.slice(1, 13);
+  const gallery = images.slice(1);
   const breadcrumbs = getBreadcrumbs(page);
   const related = getRelated(page);
   const isServicesIndex = page.path === "/services";
+  const visibleRelated = isServicesIndex
+    ? related.filter(
+        (item) => !serviceItems.some((service) => service.href === item.path),
+      )
+    : related;
 
   return (
     <div className="source-page">
@@ -243,11 +276,7 @@ export default async function ImportedSourcePage({
         </Link>
 
         <nav className="source-nav" aria-label="Основная навигация">
-          <Link href="/katalog-tekhniki">Каталог</Link>
-          <ServicesMenu />
-          <Link href="/o-kompanii">Компания</Link>
-          <Link href="/o-kompanii/stati-i-sovety">Статьи</Link>
-          <Link href="/kontakty">Контакты</Link>
+          <SiteNavigationLinks />
         </nav>
 
         <a className="source-header-phone" href={phoneHref}>
@@ -368,7 +397,7 @@ export default async function ImportedSourcePage({
           </article>
         </section>
 
-        {gallery.length > 0 && !isServicesIndex && (
+        {gallery.length > 0 && (
           <section className="source-gallery" aria-labelledby="source-gallery-title">
             <div className="source-section-heading">
               <span>03 / Фотографии</span>
@@ -380,8 +409,6 @@ export default async function ImportedSourcePage({
                   <img
                     src={image.src}
                     alt={image.alt || `${displayTitle} — фото ${index + 2}`}
-                    width="900"
-                    height="700"
                     loading="lazy"
                   />
                   <figcaption>
@@ -394,14 +421,14 @@ export default async function ImportedSourcePage({
           </section>
         )}
 
-        {related.length > 0 && (
+        {visibleRelated.length > 0 && (
           <section className="source-related" aria-labelledby="source-related-title">
             <div className="source-section-heading">
               <span>04 / Продолжить</span>
               <h2 id="source-related-title">Смотрите также</h2>
             </div>
             <div className="source-related-grid">
-              {related.map((item, index) => (
+              {visibleRelated.map((item, index) => (
                 <Link href={item.path} key={item.path}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{cleanTitle(item.title)}</strong>
