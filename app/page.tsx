@@ -113,41 +113,6 @@ export default function Home() {
     setCookieOpen(localStorage.getItem("greenauto-cookie-choice") === null);
   }, []);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    document.documentElement.classList.add("motion-ready");
-    const revealElements = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-reveal]"),
-    );
-
-    if (!("IntersectionObserver" in window)) {
-      revealElements.forEach((element) => element.classList.add("is-visible"));
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        rootMargin: "0px 0px -7% 0px",
-        threshold: 0.12,
-      },
-    );
-
-    revealElements.forEach((element) => observer.observe(element));
-
-    return () => observer.disconnect();
-  }, [equipmentFilter]);
-
   const filteredEquipment =
     equipmentFilter === "all"
       ? equipment
@@ -264,18 +229,16 @@ export default function Home() {
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
-            {[0, 1].map((group) => (
-              <div className="marquee-group" key={group}>
-                <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
-                <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
-                <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗</i>
-              </div>
-            ))}
+            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
+            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
+            <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗</i>
+            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
+            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
           </div>
         </div>
 
         <section className="request-section" id="request">
-          <div className="request-copy" data-reveal="left">
+          <div className="request-copy">
             <p className="eyebrow">Быстрый подбор</p>
             <h2>Опишите объект.<br />Остальное — <em>на нас.</em></h2>
             <p className="section-intro">
@@ -286,7 +249,7 @@ export default function Home() {
             <span className="availability"><i /> На связи круглосуточно</span>
           </div>
 
-          <form className="request-form" data-reveal="right" onSubmit={handleSubmit}>
+          <form className="request-form" onSubmit={handleSubmit}>
             <label>
               <span>Ваш телефон *</span>
               <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required />
@@ -319,7 +282,7 @@ export default function Home() {
         </section>
 
         <section className="catalog-section" id="catalog">
-          <div className="section-head" data-reveal>
+          <div className="section-head">
             <div>
               <p className="eyebrow">Каталог техники</p>
               <h2>Весь парк<br /><em>в одном месте</em></h2>
@@ -332,7 +295,7 @@ export default function Home() {
 
           <div className="category-grid">
             {categories.map((category, index) => (
-              <article className="category-card" data-reveal key={category.id}>
+              <article className="category-card" key={category.id}>
                 <div className="category-media">
                   <img
                     src={category.image}
@@ -354,12 +317,12 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="models-head" data-reveal>
+          <div className="models-head">
             <p className="eyebrow">Популярные модели</p>
             <h3>Характеристики<br /><em>и стоимость</em></h3>
           </div>
 
-          <div className="filters" data-reveal role="group" aria-label="Фильтр популярных моделей">
+          <div className="filters" role="group" aria-label="Фильтр популярных моделей">
             {equipmentFilters.map((item) => (
               <button
                 key={item.id}
@@ -374,7 +337,7 @@ export default function Home() {
 
           <div className="catalog-grid">
             {filteredEquipment.map((item, index) => (
-              <article className={`lift-card lift-card--${item.kind}`} data-reveal key={item.id}>
+              <article className={`lift-card lift-card--${item.kind}`} key={item.id}>
                 <div className="lift-visual">
                   <img
                     className="lift-photo"
@@ -408,7 +371,7 @@ export default function Home() {
 
         <section className="services-section" id="services">
           <div className="section-number">02</div>
-          <div className="section-head section-head--compact" data-reveal>
+          <div className="section-head section-head--compact">
             <div>
               <p className="eyebrow">Решаем задачи</p>
               <h2>Техника<br />под <em>задачу</em></h2>
@@ -416,7 +379,7 @@ export default function Home() {
           </div>
           <div className="services-grid">
             {useCases.map(([number, title, text], index) => (
-              <article className={`service-card service-card--${index + 1}`} data-reveal key={title}>
+              <article className={`service-card service-card--${index + 1}`} key={title}>
                 <span>{number}</span>
                 <div>
                   <h3>{title}</h3>
@@ -429,7 +392,7 @@ export default function Home() {
         </section>
 
         <section className="benefits-section">
-          <div className="benefits-lead" data-reveal="left">
+          <div className="benefits-lead">
             <p className="eyebrow eyebrow--green">Почему ГРИНАВТО</p>
             <h2>Держим<br /><em>слово.</em></h2>
             <div className="twenty-four" aria-label="24 часа 7 дней">
@@ -440,7 +403,7 @@ export default function Home() {
           </div>
           <div className="benefits-list">
             {benefits.map((benefit) => (
-              <article data-reveal="right" key={benefit.number}>
+              <article key={benefit.number}>
                 <span>{benefit.number}</span>
                 <h3>{benefit.title}</h3>
                 <p>{benefit.text}</p>
@@ -450,7 +413,7 @@ export default function Home() {
         </section>
 
         <section className="process-section" id="process">
-          <div className="section-head" data-reveal>
+          <div className="section-head">
             <div>
               <p className="eyebrow">Четыре шага</p>
               <h2>От заявки<br /><em>до подачи</em></h2>
@@ -462,7 +425,7 @@ export default function Home() {
           </div>
           <div className="process-grid">
             {process.map(([number, title, text]) => (
-              <article data-reveal key={number}>
+              <article key={number}>
                 <strong>{number}</strong>
                 <h3>{title}</h3>
                 <p>{text}</p>
@@ -472,7 +435,7 @@ export default function Home() {
         </section>
 
         <section className="works-section" id="works">
-          <div className="works-title" data-reveal="left">
+          <div className="works-title">
             <p className="eyebrow eyebrow--light">Направления</p>
             <h2>Техника<br />в деле</h2>
             <p>
@@ -482,7 +445,7 @@ export default function Home() {
           </div>
           <div className="works-grid">
             {works.map(([number, title, place, image, alt], index) => (
-              <article className={`work-card work-card--${index + 1}`} data-reveal key={number}>
+              <article className={`work-card work-card--${index + 1}`} key={number}>
                 <div className="work-placeholder">
                   <span>{number}</span>
                   <img
@@ -503,7 +466,7 @@ export default function Home() {
         </section>
 
         <section className="prices-section" id="prices">
-          <div className="section-head" data-reveal>
+          <div className="section-head">
             <div>
               <p className="eyebrow">Стоимость</p>
               <h2>Честный расчёт<br /><em>под объект</em></h2>
@@ -515,7 +478,7 @@ export default function Home() {
           </div>
           <div className="price-table">
             {equipment.map((item, index) => (
-              <div className="price-row" data-reveal key={item.id}>
+              <div className="price-row" key={item.id}>
                 <span>0{index + 1}</span>
                 <h3>{item.name}</h3>
                 <p>{item.shortSpec}</p>
@@ -531,13 +494,13 @@ export default function Home() {
         </section>
 
         <section className="faq-section" id="faq">
-          <div className="faq-heading" data-reveal="left">
+          <div className="faq-heading">
             <p className="eyebrow">Вопросы и ответы</p>
             <h2>Коротко<br /><em>о главном</em></h2>
           </div>
           <div className="faq-list">
             {faqs.map((faq, index) => (
-              <details data-reveal="right" key={faq.question}>
+              <details key={faq.question}>
                 <summary>
                   <span>0{index + 1}</span>
                   <strong>{faq.question}</strong>
@@ -550,13 +513,13 @@ export default function Home() {
         </section>
 
         <section className="contacts-section" id="contacts">
-          <div className="contact-kicker" data-reveal>
+          <div className="contact-kicker">
             <p className="eyebrow eyebrow--green">Обсудим задачу?</p>
             <span>Санкт-Петербург / ЛО</span>
           </div>
-          <h2 data-reveal>Подадим<br /><em>вовремя.</em></h2>
-          <a className="contact-phone" data-reveal href={phoneHref}>{phoneDisplay}</a>
-          <div className="contact-bottom" data-reveal>
+          <h2>Подадим<br /><em>вовремя.</em></h2>
+          <a className="contact-phone" href={phoneHref}>{phoneDisplay}</a>
+          <div className="contact-bottom">
             <p>
               Напишите или позвоните — уточним параметры и предложим подходящий
               вариант спецтехники.
