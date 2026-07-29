@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { SiteNavigationLinks } from "./components/services-menu";
-import { categories, equipment } from "./data/lifts";
+import { equipment } from "./data/lifts";
 import { serviceItems } from "./data/services";
 
 const phoneDisplay = "+7 (999) 008-88-84";
@@ -12,10 +12,17 @@ const whatsappHref = "https://wa.me/79990088884";
 const telegramHref = "https://t.me/generalsite";
 const email = "greenavtospb@mail.ru";
 
-const liftCategories = categories.filter(
-  (category) => category.id === "aerial-lifts",
-);
 const liftEquipment = equipment.filter((item) => item.kind === "lift");
+const featuredLiftIds = new Set([
+  "lift-12",
+  "lift-18",
+  "lift-28",
+  "lift-45",
+  "lift-50",
+]);
+const featuredLiftEquipment = liftEquipment.filter((item) =>
+  featuredLiftIds.has(item.id),
+);
 
 const offers = [
   {
@@ -340,32 +347,32 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="category-grid category-grid--single">
-            {liftCategories.map((category, index) => (
-              <a
-                className="category-card"
-                href={category.href}
-                key={category.id}
-                aria-label={`Открыть раздел: ${category.name}`}
+          <div className="fleet-grid" aria-label="Автопарк автовышек">
+            {liftEquipment.map((item, index) => (
+              <Link
+                className="fleet-card"
+                href={item.href}
+                key={item.id}
+                aria-label={`Открыть: ${item.name}`}
               >
-                <div className="category-media">
+                <figure>
                   <img
-                    src={category.image}
-                    width="560"
-                    height="560"
+                    src={item.image}
+                    width="720"
+                    height="520"
                     loading="lazy"
                     decoding="async"
-                    alt={category.alt}
-                    title={category.name}
+                    alt={item.alt}
                   />
-                  <span>0{index + 1}</span>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                </figure>
+                <div>
+                  <p>{item.shortSpec}</p>
+                  <h3>{item.name}</h3>
+                  <strong>от {item.price.toLocaleString("ru-RU")} ₽/смена</strong>
+                  <i aria-hidden="true">↗︎</i>
                 </div>
-                <div className="category-copy">
-                  <h3>{category.name}</h3>
-                  <p>от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч</p>
-                  <span className="category-arrow" aria-hidden="true">↗︎</span>
-                </div>
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -375,7 +382,7 @@ export default function Home() {
           </div>
 
           <div className="catalog-grid">
-            {liftEquipment.map((item, index) => (
+            {featuredLiftEquipment.map((item, index) => (
               <article className={`lift-card lift-card--${item.kind}`} key={item.id}>
                 <div className="lift-visual">
                   <img

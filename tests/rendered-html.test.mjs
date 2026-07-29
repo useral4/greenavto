@@ -59,6 +59,13 @@ const catalogMenuRoutes = [
   "/katalog-tekhniki/avtovyshki",
 ];
 
+const fleetRoutes = [
+  12, 15, 17, 18, 22, 24, 25, 26, 28, 32, 35, 45, 50, 60,
+].map(
+  (height) =>
+    `/katalog-tekhniki/avtovyshki/arenda-avtovyshki-${height}m`,
+);
+
 const structuredPagePaths = new Set([
   "/katalog-tekhniki",
   "/services",
@@ -119,6 +126,14 @@ test("exports every public route as static HTML", async () => {
   for (const route of [...catalogMenuRoutes, ...serviceRoutes]) {
     assert.match(home, new RegExp(`href="${route}"`));
   }
+  assert.equal(
+    (home.match(/class="fleet-card"/g) ?? []).length,
+    fleetRoutes.length,
+  );
+  for (const route of fleetRoutes) {
+    assert.match(home, new RegExp(`href="${route}"`));
+  }
+  assert.doesNotMatch(home, /\/catalog\/category-lift\.webp/);
   assert.doesNotMatch(home, /href="\/katalog-tekhniki\/avtokrany"/);
   assert.doesNotMatch(home, /href="\/services\/burenie"/);
 
@@ -128,7 +143,8 @@ test("exports every public route as static HTML", async () => {
   assert.match(catalog, /class="catalog-index"/);
   assert.match(catalog, /Популярные автовышки/);
   assert.match(catalog, /Примерная стоимость аренды/);
-  assert.match(catalog, /\/catalog\/category-lift\.webp/);
+  assert.match(catalog, /\/catalog\/lift-28-hq\.jpg/);
+  assert.doesNotMatch(catalog, /\/catalog\/category-lift\.webp/);
   assert.doesNotMatch(catalog, /\/catalog\/category-crane\.webp/);
 
   const article = await readStaticPage(

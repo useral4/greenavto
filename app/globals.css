@@ -845,6 +845,108 @@ h2 em {
   transform: translate(3px, -3px);
 }
 
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 72px;
+  border: 1px solid rgba(9, 11, 10, 0.14);
+  background: rgba(9, 11, 10, 0.14);
+}
+
+.fleet-card {
+  min-width: 0;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.fleet-card figure {
+  position: relative;
+  height: 220px;
+  margin: 0;
+  overflow: hidden;
+  background: #eef1ec;
+}
+
+.fleet-card figure img {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fleet-card:hover figure img {
+  transform: scale(1.045);
+}
+
+.fleet-card figure span {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: var(--paper);
+  background: var(--ink);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.fleet-card > div {
+  position: relative;
+  min-height: 154px;
+  padding: 21px 66px 23px 20px;
+}
+
+.fleet-card p {
+  margin: 0 0 8px;
+  color: var(--green-dark);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fleet-card h3 {
+  margin: 0;
+  font-size: clamp(18px, 1.45vw, 24px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.fleet-card strong {
+  display: block;
+  margin-top: 18px;
+  color: var(--green-dark);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.fleet-card i {
+  position: absolute;
+  right: 18px;
+  bottom: 20px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  background: var(--green);
+  font-size: 18px;
+  font-style: normal;
+  line-height: 1;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.fleet-card:hover i {
+  background: var(--green-hover);
+  transform: translate(2px, -2px);
+}
+
 .models-head {
   margin-top: 128px;
 }
@@ -2106,6 +2208,10 @@ h2 em {
   .works-title {
     position: static;
   }
+
+  .fleet-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
@@ -2153,6 +2259,10 @@ h2 em {
 
   .catalog-section > * {
     width: min(calc(100% - 48px), calc(var(--max) - 160px));
+  }
+
+  .fleet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .category-grid {
@@ -2361,6 +2471,19 @@ h2 em {
 
   .catalog-section > * {
     width: 100%;
+  }
+
+  .fleet-grid {
+    grid-template-columns: 1fr;
+    margin-top: 44px;
+  }
+
+  .fleet-card figure {
+    height: 250px;
+  }
+
+  .fleet-card > div {
+    min-height: 138px;
   }
 
   .category-grid {
