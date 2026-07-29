@@ -16,6 +16,10 @@ export type StructuredSection = {
 export type StructuredPageContent = {
   title?: string;
   intro: string[];
+  media?: {
+    hero?: { src: string; alt: string };
+    inline?: Array<{ src: string; alt: string }>;
+  };
   highlights?: Array<[string, string]>;
   models?: StructuredModel[];
   linksTitle?: string;
@@ -471,7 +475,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
     models: [
       {
         name: "John Deere E210LC",
-        image: "/source/f30a56786f337260.webp",
+        image: "/catalog/crawler-excavator-black-hq.webp",
         alt: "Гусеничный экскаватор John Deere E210LC",
         price: "от 6 750 ₽/ч",
         specs: [
@@ -483,7 +487,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
       },
       {
         name: "Caterpillar 336D2 L",
-        image: "/source/2a2905f545fb6025.webp",
+        image: "/catalog/crawler-excavator-yellow-hq.webp",
         alt: "Гусеничный экскаватор Caterpillar 336D2 L",
         price: "стоимость по запросу",
         specs: [
@@ -495,7 +499,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
       },
       {
         name: "Hitachi ZX210LCN-G",
-        image: "/source/b32a19f0a3f7348b.webp",
+        image: "/catalog/crawler-excavator-orange-hq.webp",
         alt: "Гусеничный экскаватор Hitachi ZX210LCN-G",
         price: "от 2 750 ₽/ч",
         specs: [
@@ -711,21 +715,21 @@ export const structuredPages: Record<string, StructuredPageContent> = {
     models: [
       {
         name: "Вилочный погрузчик 1,5 т",
-        image: "/source/613c813d466b4b94.webp",
+        image: "/catalog/forklift-15-hq.webp",
         alt: "Вилочный погрузчик грузоподъёмностью 1,5 тонны",
         price: "от 16 000 ₽/смена",
         specs: [["Грузоподъёмность", "1,5 т"]],
       },
       {
         name: "Вилочный погрузчик 3 т",
-        image: "/source/f8175c0fef4edb65.webp",
+        image: "/catalog/forklift-3-hq.webp",
         alt: "Вилочный погрузчик грузоподъёмностью 3 тонны",
         price: "от 22 000 ₽/смена",
         specs: [["Грузоподъёмность", "3 т"]],
       },
       {
         name: "Вилочный погрузчик 4 т",
-        image: "/source/feb690e33266d5f2.webp",
+        image: "/catalog/forklift-5-hq.webp",
         alt: "Вилочный погрузчик грузоподъёмностью 4 тонны",
         price: "от 24 000 ₽/смена",
         specs: [["Грузоподъёмность", "4 т"]],
@@ -841,6 +845,18 @@ export const structuredPages: Record<string, StructuredPageContent> = {
       "Автовышка 45 метров предназначена для фасадных, монтажных и обслуживающих работ на высотных зданиях, промышленных объектах и опорах.",
       "Перед подачей учитываем требуемый боковой вылет, массу людей и инструмента в люльке, размеры рабочей площадки и состояние подъездных путей.",
     ],
+    media: {
+      hero: {
+        src: "/catalog/lift-45-hero-hq.webp",
+        alt: "Автовышка 45 метров с телескопической стрелой",
+      },
+      inline: [
+        {
+          src: "/catalog/lift-45-work-hq.webp",
+          alt: "Автовышка 45 метров работает у промышленного здания",
+        },
+      ],
+    },
     highlights: [
       ["Рабочая высота", "45 м"],
       ["Грузоподъёмность люльки", "до 300 кг"],

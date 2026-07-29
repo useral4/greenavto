@@ -146,6 +146,31 @@ test("exports every public route as static HTML", async () => {
   );
   assert.match(lift12, /class="source-highlights"/);
   assert.match(lift12, /class="source-inline-media/);
+
+  const lift45 = await readStaticPage(
+    "katalog-tekhniki/avtovyshki/arenda-avtovyshki-45m/index.html",
+  );
+  assert.match(lift45, /\/catalog\/lift-45-hero-hq\.webp/);
+  assert.match(lift45, /\/catalog\/lift-45-work-hq\.webp/);
+  assert.doesNotMatch(
+    lift45,
+    /\/source\/(?:13d0266a29b30ab9|5dfa1575e220882c)\.webp/,
+  );
+
+  const crawlerExcavators = await readStaticPage(
+    "katalog-tekhniki/gusenichnye-ekskavatory/index.html",
+  );
+  assert.match(
+    crawlerExcavators,
+    /\/catalog\/crawler-excavator-black-hq\.webp/,
+  );
+  assert.doesNotMatch(crawlerExcavators, /\/source\/f30a56786f337260\.webp/);
+
+  const forklifts = await readStaticPage(
+    "katalog-tekhniki/vilochnye-pogruzchiki/index.html",
+  );
+  assert.match(forklifts, /\/catalog\/forklift-15-hq\.webp/);
+  assert.doesNotMatch(forklifts, /\/source\/613c813d466b4b94\.webp/);
 });
 
 function decodeHtml(value) {
@@ -219,7 +244,7 @@ test("every imported text block and content image is rendered", async () => {
     if (contentImages.length > 0) {
       assert.match(
         html,
-        /<figure class="source-hero-media"><img[^>]+src="\/[^"]+"/,
+        /<figure class="source-hero-media(?: [^"]*)?"><img[^>]+src="\/[^"]+"/,
         `Missing primary image on ${page.path}`,
       );
     }

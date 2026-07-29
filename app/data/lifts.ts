@@ -124,7 +124,7 @@ export const equipment: EquipmentProduct[] = [
       ["Колёсная формула", "4×2"],
     ],
     price: 12000,
-    image: "/source/a1e8eb05969884c0.webp",
+    image: "/catalog/lift-18-hq.webp",
     alt: "Автовышка 18 метров на шасси ГАЗель Next",
   },
   {
@@ -156,7 +156,7 @@ export const equipment: EquipmentProduct[] = [
       ["Поворот платформы", "360°"],
     ],
     price: 26000,
-    image: "/source/bcd682338288e4e6.webp",
+    image: "/catalog/lift-45-hero-hq.webp",
     alt: "Телескопическая автовышка DAEWOO высотой 45 метров",
   },
   {

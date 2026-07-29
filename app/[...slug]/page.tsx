@@ -365,7 +365,13 @@ export async function generateMetadata({
   const page = findPage(slug);
   if (!page) return {};
 
-  const image = imagesFor(page)[0];
+  const structuredContent = structuredPages[page.path];
+  const firstModel = structuredContent?.models?.[0];
+  const image =
+    structuredContent?.media?.hero ??
+    (firstModel
+      ? { src: firstModel.image, alt: firstModel.alt }
+      : imagesFor(page)[0]);
   return {
     title: `${cleanTitle(page.title)} | ГРИНАВТО`,
     description: sanitizeText(page.description),
@@ -392,8 +398,13 @@ export default async function ImportedSourcePage({
   const displayTitle = structuredContent?.title ?? getDisplayTitle(page);
   const content = contentFor(page, displayTitle);
   const images = imagesFor(page);
-  const heroImage = images[0];
-  const inlineImages = images.slice(1, 3);
+  const firstModel = structuredContent?.models?.[0];
+  const heroImage =
+    structuredContent?.media?.hero ??
+    (firstModel
+      ? { src: firstModel.image, alt: firstModel.alt }
+      : images[0]);
+  const inlineImages = structuredContent?.media?.inline ?? images.slice(1, 3);
   const structuredImages = inlineImages.length > 0 ? inlineImages : [heroImage];
   const related = getRelated(page);
   const isServicesIndex = page.path === "/services";
@@ -453,7 +464,13 @@ export default async function ImportedSourcePage({
             </div>
           </div>
 
-          <figure className="source-hero-media">
+          <figure
+            className={`source-hero-media${
+              page.path.startsWith("/katalog-tekhniki")
+                ? " source-hero-media--contain"
+                : ""
+            }`}
+          >
             <img
               src={heroImage.src}
               alt={heroImage.alt || displayTitle}
