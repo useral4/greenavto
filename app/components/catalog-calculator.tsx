@@ -4,11 +4,10 @@ import { useMemo, useState } from "react";
 
 const rentalOptions = [
   { value: "11000", label: "Автовышка 12 м" },
+  { value: "12000", label: "Автовышка 18 м" },
   { value: "16000", label: "Автовышка 28 м" },
+  { value: "26000", label: "Автовышка 45 м" },
   { value: "40000", label: "Автовышка 50 м" },
-  { value: "10000", label: "Автокран 16 т" },
-  { value: "15050", label: "Автокран 25 т" },
-  { value: "45000", label: "Автокран 50 т" },
 ] as const;
 
 export function CatalogCalculator() {
@@ -26,14 +25,14 @@ export function CatalogCalculator() {
         <span>Быстрый расчёт</span>
         <h2>Примерная стоимость аренды</h2>
         <p>
-          Выберите технику и количество смен. Точную стоимость подтвердит
+          Выберите высоту автовышки и количество смен. Точную стоимость подтвердит
           менеджер после уточнения адреса и условий работы.
         </p>
       </div>
 
       <div className="catalog-index-calculator-form">
         <label>
-          <span>Вид техники</span>
+          <span>Рабочая высота</span>
           <select value={rate} onChange={(event) => setRate(event.target.value)}>
             {rentalOptions.map((option) => (
               <option value={option.value} key={option.label}>

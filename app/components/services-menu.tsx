@@ -1,11 +1,9 @@
 import Link from "next/link";
 import {
   aboutNavigation,
-  catalogNavigation,
   type NavigationItem,
   popularNavigation,
 } from "../data/navigation";
-import { serviceItems } from "../data/services";
 
 function DropdownMenu({
   label,
@@ -41,32 +39,17 @@ function DropdownMenu({
   );
 }
 
-const serviceNavigation: NavigationItem[] = serviceItems.map((service) => ({
-  label: service.title,
-  href: service.href,
-}));
-
 export function SiteNavigationLinks() {
   return (
     <>
       <Link href="/">Главная</Link>
-      <DropdownMenu
-        label="Каталог техники"
-        href="/katalog-tekhniki"
-        allLabel="Весь каталог"
-        items={catalogNavigation}
-      />
+      <Link href="/katalog-tekhniki/avtovyshki">Автовышки</Link>
       <Link href="/price">Цены</Link>
-      <DropdownMenu
-        label="Услуги"
-        href="/services"
-        allLabel="Все услуги"
-        items={serviceNavigation}
-      />
+      <Link href="/services/arenda-avtovyshek">Аренда</Link>
       <DropdownMenu
         label="Популярные модели"
-        href="/populyarnye-modeli-specztekhniki"
-        allLabel="Все популярные модели"
+        href="/katalog-tekhniki/avtovyshki"
+        allLabel="Все автовышки"
         items={popularNavigation}
       />
       <DropdownMenu

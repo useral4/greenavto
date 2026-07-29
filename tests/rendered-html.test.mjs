@@ -15,31 +15,48 @@ const sourceData = JSON.parse(
     "utf8",
   ),
 );
-const sourcePagePaths = sourceData.pages.map(
+
+const excludedArticlePaths = new Set([
+  "/o-kompanii/stati-i-sovety/burenie",
+  "/o-kompanii/stati-i-sovety/burenie-skvazhin",
+  "/o-kompanii/stati-i-sovety/burovye-vyshki-montazh-i-ih-obsluzhivanie",
+  "/o-kompanii/stati-i-sovety/ekologicheskie-aspekty-ispolzovaniya",
+  "/o-kompanii/stati-i-sovety/innovatwii-i-rost",
+  "/o-kompanii/stati-i-sovety/musor",
+  "/o-kompanii/stati-i-sovety/planirovka",
+  "/o-kompanii/stati-i-sovety/podemniki-dlya-parkovok",
+  "/o-kompanii/stati-i-sovety/podymnik-na-sklade",
+  "/o-kompanii/stati-i-sovety/rol-professionalnogo-obucheniya",
+  "/o-kompanii/stati-i-sovety/snos-zdanei-ekskavatorom",
+  "/o-kompanii/stati-i-sovety/vidy-podemnoj-tekhniki",
+]);
+
+function isVisibleLiftPath(route) {
+  if (route.startsWith("/katalog-tekhniki/")) {
+    return (
+      route === "/katalog-tekhniki/avtovyshki" ||
+      route.startsWith("/katalog-tekhniki/avtovyshki/")
+    );
+  }
+  if (route.startsWith("/services/")) return route.includes("avtovysh");
+  if (route.startsWith("/tpost/")) return false;
+  if (route === "/populyarnye-modeli-specztekhniki") return false;
+  return !excludedArticlePaths.has(route);
+}
+
+const visibleSourcePages = sourceData.pages.filter((page) =>
+  isVisibleLiftPath(page.path),
+);
+const sourcePagePaths = visibleSourcePages.map(
   (page) => `${page.path.replace(/^\//, "")}/index.html`,
 );
 
 const serviceRoutes = [
-  "/services/razrabotka-kotlovana-shpuntovanie",
-  "/services/planirovka-zemli",
-  "/services/burenie",
-  "/services/vyvoz-grunta",
-  "/services/vyvoz-spila",
-  "/services/vyvoz-stroitelnogo-musora",
   "/services/arenda-avtovyshek",
-  "/services/perevozka-sypuchih-materilov",
 ];
 
 const catalogMenuRoutes = [
-  "/katalog-tekhniki/avtokrany",
   "/katalog-tekhniki/avtovyshki",
-  "/katalog-tekhniki/gusenichnye-krany",
-  "/katalog-tekhniki/gusenichnye-ekskavatory",
-  "/katalog-tekhniki/kolesnyj-ekskavator",
-  "/katalog-tekhniki/ekskavatory-pogruzchiki",
-  "/katalog-tekhniki/mini-pogruzchiki",
-  "/katalog-tekhniki/vilochnye-pogruzchiki",
-  "/katalog-tekhniki/frontalnye-pogruzchiki",
 ];
 
 const structuredPagePaths = new Set([
@@ -49,6 +66,8 @@ const structuredPagePaths = new Set([
   ...catalogMenuRoutes,
   "/katalog-tekhniki/avtovyshki/arenda-avtovyshki-12m",
   "/katalog-tekhniki/avtovyshki/arenda-avtovyshki-45m",
+  "/o-kompanii/stati-i-sovety",
+  "/o-kompanii/kak-opredelit-neobhodimuyu-vysotu-avtovyshki",
 ]);
 
 const utilityImages = new Set([
@@ -87,7 +106,7 @@ test("exports every public route as static HTML", async () => {
 
   const home = await readStaticPage("index.html");
   assert.match(home, /<html lang="ru">/);
-  assert.match(home, /<title>Аренда спецтехники[^<]*ГРИНАВТО<\/title>/);
+  assert.match(home, /<title>Аренда автовышек[^<]*ГРИНАВТО<\/title>/);
   assert.match(home, /https:\/\/greenavto\.onrender\.com\/og-green\.png/);
   assert.match(home, /<form class="request-form">/);
   assert.match(home, /Популярные модели/);
@@ -96,15 +115,17 @@ test("exports every public route as static HTML", async () => {
   for (const route of [...catalogMenuRoutes, ...serviceRoutes]) {
     assert.match(home, new RegExp(`href="${route}"`));
   }
+  assert.doesNotMatch(home, /href="\/katalog-tekhniki\/avtokrany"/);
+  assert.doesNotMatch(home, /href="\/services\/burenie"/);
 
   const catalog = await readStaticPage("katalog-tekhniki/index.html");
-  assert.match(catalog, /Каталог спецтехники/);
+  assert.match(catalog, /Каталог автовышек/);
   assert.match(catalog, /class="source-page"/);
   assert.match(catalog, /class="catalog-index"/);
-  assert.match(catalog, /Выберите категорию/);
-  assert.match(catalog, /Популярная техника/);
+  assert.match(catalog, /Популярные автовышки/);
   assert.match(catalog, /Примерная стоимость аренды/);
-  assert.match(catalog, /\/catalog\/category-crane\.webp/);
+  assert.match(catalog, /\/catalog\/category-lift\.webp/);
+  assert.doesNotMatch(catalog, /\/catalog\/category-crane\.webp/);
 
   const article = await readStaticPage(
     sourcePagePaths.find((page) => page.includes("/stati-i-sovety/")) ?? "",
@@ -113,17 +134,18 @@ test("exports every public route as static HTML", async () => {
   assert.doesNotMatch(article, /class="source-gallery"/);
 
   const services = await readStaticPage("services/index.html");
-  assert.match(services, /class="source-services-grid"/);
+  assert.match(services, /class="source-services-grid(?: |")/);
   assert.match(services, /class="services-menu-panel"/);
-  assert.match(services, /\/source\/c30ee07abb879cef\.webp/);
+  assert.match(services, /\/catalog\/lift-28-hq\.jpg/);
+  assert.doesNotMatch(services, /href="\/services\/vyvoz-grunta"/);
   for (const route of serviceRoutes) {
     assert.match(services, new RegExp(`href="${route}"`));
   }
 
   const serviceDetail = await readStaticPage(
-    "services/razrabotka-kotlovana-shpuntovanie/index.html",
+    "services/arenda-avtovyshek/index.html",
   );
-  assert.match(serviceDetail, /\/source\/c30ee07abb879cef\.webp/);
+  assert.match(serviceDetail, /\/catalog\/lift-28-hq\.jpg/);
 
   const price = await readStaticPage("price/index.html");
   assert.match(price, /class="source-price-table"/);
@@ -172,20 +194,12 @@ test("exports every public route as static HTML", async () => {
     /\/source\/(?:13d0266a29b30ab9|5dfa1575e220882c)\.webp/,
   );
 
-  const crawlerExcavators = await readStaticPage(
-    "katalog-tekhniki/gusenichnye-ekskavatory/index.html",
+  await assert.rejects(
+    access(path.join(staticRoot, "katalog-tekhniki/avtokrany/index.html")),
   );
-  assert.match(
-    crawlerExcavators,
-    /\/catalog\/crawler-excavator-black-hq\.webp/,
+  await assert.rejects(
+    access(path.join(staticRoot, "services/burenie/index.html")),
   );
-  assert.doesNotMatch(crawlerExcavators, /\/source\/f30a56786f337260\.webp/);
-
-  const forklifts = await readStaticPage(
-    "katalog-tekhniki/vilochnye-pogruzchiki/index.html",
-  );
-  assert.match(forklifts, /\/catalog\/forklift-15-hq\.webp/);
-  assert.doesNotMatch(forklifts, /\/source\/613c813d466b4b94\.webp/);
 });
 
 function decodeHtml(value) {
@@ -219,6 +233,16 @@ function sanitizeImportedText(value) {
     )
     .replace(/\bHundai\b/g, "Hyundai")
     .replace(/\bэскаватор\b/gi, "экскаватор")
+    .replace(/различной спецтехники/gi, "автовышек разных моделей")
+    .replace(/аренды нашей спецтехники/gi, "аренды автовышек")
+    .replace(/аренд[аеуы] спецтехники/gi, "аренда автовышек")
+    .replace(/единиц спецтехники/gi, "автовышек в парке")
+    .replace(/качественной спецтехники/gi, "исправных автовышек")
+    .replace(/широкий выбор спецтехники/gi, "широкий выбор автовышек")
+    .replace(/спецтехникой/gi, "автовышкой")
+    .replace(/спецтехнику/gi, "автовышку")
+    .replace(/спецтехники/gi, "автовышек")
+    .replace(/спецтехника/gi, "автовышка")
     .replace(/\bм\s*3\b/gi, "м³")
     .replace(/(\d)\s*р\/ч\s*р\.?/gi, "$1 ₽/ч")
     .replace(/(\d)\s*р\.(?=\s|$)/gi, "$1 ₽")
@@ -227,8 +251,14 @@ function sanitizeImportedText(value) {
     .trim();
 }
 
+function mentionsRemovedDirection(value) {
+  return /автокран|гусеничн(?:ый|ые) кран|экскаватор|погрузчик|разработк[аи] котлован|планировк[аи] земл|бурени[ея]|вывоз (?:грунта|спила|строительного мусора)|земляные работы|сыпучих материал/i.test(
+    value,
+  );
+}
+
 test("every imported text block and content image is rendered", async () => {
-  for (const page of sourceData.pages) {
+  for (const page of visibleSourcePages) {
     const relativePath = `${page.path.replace(/^\//, "")}/index.html`;
     const html = await readStaticPage(relativePath);
     const text = plainText(html);
@@ -245,6 +275,7 @@ test("every imported text block and content image is rendered", async () => {
       ) {
         continue;
       }
+      if (mentionsRemovedDirection(block.text)) continue;
       const expected = sanitizeImportedText(block.text);
       if (!expected) continue;
       assert.ok(

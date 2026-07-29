@@ -12,11 +12,10 @@ const whatsappHref = "https://wa.me/79990088884";
 const telegramHref = "https://t.me/generalsite";
 const email = "greenavtospb@mail.ru";
 
-const equipmentFilters = [
-  { id: "all", label: "Все модели" },
-  { id: "lift", label: "Автовышки" },
-  { id: "crane", label: "Автокраны" },
-];
+const liftCategories = categories.filter(
+  (category) => category.id === "aerial-lifts",
+);
+const liftEquipment = equipment.filter((item) => item.kind === "lift");
 
 const offers = [
   {
@@ -42,7 +41,7 @@ const offers = [
 ];
 
 const companyFacts = [
-  ["145+", "единиц спецтехники"],
+  ["12–60 м", "рабочая высота"],
   ["100%", "техника проходит обслуживание"],
   ["1 988", "довольных клиентов"],
   ["15", "лет опыта"],
@@ -102,7 +101,7 @@ const benefits = [
   {
     number: "03",
     title: "Широкий выбор",
-    text: "Подбираем современную спецтехнику по характеристикам, площадке и виду работ.",
+    text: "Подбираем автовышку по рабочей высоте, вылету стрелы и условиям площадки.",
   },
   {
     number: "04",
@@ -113,28 +112,28 @@ const benefits = [
 
 const process = [
   ["01", "Заявка", "Расскажите, где и что нужно сделать."],
-  ["02", "Подбор", "Уточним характеристики техники и условия площадки."],
+  ["02", "Подбор", "Уточним рабочую высоту, вылет стрелы и условия площадки."],
   ["03", "Расчёт", "Подтвердим подходящую машину, дату и стоимость."],
-  ["04", "Подача", "Доставим согласованную спецтехнику на объект."],
+  ["04", "Подача", "Доставим согласованную автовышку на объект."],
 ];
 
 const works = [
-  ["01 / 04", "Высотные работы", "Автовышки", "/catalog/lift-28-hq.jpg", "Автовышка для высотных работ"],
-  ["02 / 04", "Подъём грузов", "Автокраны", "/catalog/category-crane.webp", "Автомобильный кран для подъёма грузов"],
-  ["03 / 04", "Земляные работы", "Экскаваторы", "/catalog/category-crawler-excavator.webp", "Гусеничный экскаватор для земляных работ"],
-  ["04 / 04", "Погрузочные работы", "Погрузчики", "/catalog/front-loader-hq.jpg", "Фронтальный погрузчик"],
+  ["01 / 04", "Фасадные работы", "Монтаж и обслуживание", "/catalog/lift-28-hq.jpg", "Автовышка для фасадных работ"],
+  ["02 / 04", "Уличное освещение", "Монтаж и ремонт", "/catalog/lift-18-hq.webp", "Автовышка для обслуживания уличного освещения"],
+  ["03 / 04", "Обрезка деревьев", "Безопасная работа на высоте", "/catalog/lift-45-work-hq.webp", "Автовышка для обрезки деревьев"],
+  ["04 / 04", "Реклама и вывески", "Монтаж конструкций", "/catalog/lift-45-hero-hq.webp", "Автовышка для монтажа рекламы"],
 ];
 
 const faqs = [
   {
-    question: "Как подобрать подходящую спецтехнику?",
+    question: "Как подобрать подходящую автовышку?",
     answer:
-      "Сообщите вид работ, параметры объекта и условия подъезда. Если точных данных нет, опишите задачу — менеджер поможет определить подходящую категорию.",
+      "Сообщите вид работ, требуемую высоту и условия подъезда. Если точных данных нет, опишите задачу — менеджер поможет определить подходящую модель.",
   },
   {
-    question: "Можно заказать технику на сегодня?",
+    question: "Можно заказать автовышку на сегодня?",
     answer:
-      "Срочная подача зависит от свободной техники и адреса объекта. Позвоните или отправьте заявку — оперативно проверим доступность.",
+      "Срочная подача зависит от свободных автовышек и адреса объекта. Позвоните или отправьте заявку — оперативно проверим доступность.",
   },
   {
     question: "Что входит в стоимость?",
@@ -144,12 +143,12 @@ const faqs = [
   {
     question: "Выезжаете в Ленинградскую область?",
     answer:
-      "Да. Стоимость и время подачи зависят от удалённости объекта и выбранной техники.",
+      "Да. Стоимость и время подачи зависят от удалённости объекта и выбранной автовышки.",
   },
   {
     question: "Можно работать ночью и в выходные?",
     answer:
-      "Заявки принимаются круглосуточно. Возможность работ в конкретное время согласовывается с учётом техники, объекта и местных ограничений.",
+      "Заявки принимаются круглосуточно. Возможность работ в конкретное время согласовывается с учётом автовышки, объекта и местных ограничений.",
   },
 ];
 
@@ -158,28 +157,22 @@ const structuredData = {
   "@type": "LocalBusiness",
   name: "ГРИНАВТО",
   description:
-    "Аренда спецтехники в Санкт-Петербурге и Ленинградской области.",
+    "Аренда автовышек в Санкт-Петербурге и Ленинградской области.",
   telephone: "+7-999-008-88-84",
   email,
   areaServed: ["Санкт-Петербург", "Ленинградская область"],
   openingHours: "Mo-Su 00:00-23:59",
-  serviceType: "Аренда спецтехники",
+  serviceType: "Аренда автовышек",
 };
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [equipmentFilter, setEquipmentFilter] = useState("all");
   const [submitted, setSubmitted] = useState(false);
   const [cookieOpen, setCookieOpen] = useState(false);
 
   useEffect(() => {
     setCookieOpen(localStorage.getItem("greenauto-cookie-choice") === null);
   }, []);
-
-  const filteredEquipment =
-    equipmentFilter === "all"
-      ? equipment
-      : equipment.filter((item) => item.kind === equipmentFilter);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -248,17 +241,17 @@ export default function Home() {
             <h1 id="hero-title">
               Аренда
               <br />
-              спецтехники
+              автовышек
               <br />
               <em>без задержек</em>
             </h1>
             <p className="hero-lead">
-              Автовышки, автокраны, экскаваторы и погрузчики для объектов
+              Автовышки высотой от 12 до 60 метров для объектов
               Санкт-Петербурга и Ленинградской области.
             </p>
             <div className="hero-actions">
               <a className="button button--green" href="#request">
-                Подобрать технику <span aria-hidden="true">↗︎</span>
+                Подобрать автовышку <span aria-hidden="true">↗︎</span>
               </a>
               <a className="text-link text-link--light" href={phoneHref}>
                 Позвонить <span aria-hidden="true">→</span>
@@ -277,17 +270,17 @@ export default function Home() {
             </div>
             <div>
               <strong>1 звонок</strong>
-              <span>для подбора техники</span>
+              <span>для подбора автовышки</span>
             </div>
           </div>
         </section>
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
-            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗︎</i>
+            <span>АРЕНДА АВТОВЫШЕК</span><i>↗︎</i>
             <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗︎</i>
             <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗︎</i>
-            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗︎</i>
+            <span>АРЕНДА АВТОВЫШЕК</span><i>↗︎</i>
             <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗︎</i>
           </div>
         </div>
@@ -338,17 +331,17 @@ export default function Home() {
         <section className="catalog-section" id="catalog">
           <div className="section-head">
             <div>
-              <p className="eyebrow">Каталог техники</p>
+              <p className="eyebrow">Каталог автовышек</p>
               <h2>Весь парк<br /><em>в одном месте</em></h2>
             </div>
             <p className="section-intro">
-              Автокраны, автовышки, экскаваторы и погрузчики. Подберём технику
+              Модели высотой от 12 до 60 метров. Подберём автовышку
               под вид работ, характеристики и условия объекта.
             </p>
           </div>
 
-          <div className="category-grid">
-            {categories.map((category, index) => (
+          <div className="category-grid category-grid--single">
+            {liftCategories.map((category, index) => (
               <a
                 className="category-card"
                 href={category.href}
@@ -381,21 +374,8 @@ export default function Home() {
             <h3>Характеристики<br /><em>и стоимость</em></h3>
           </div>
 
-          <div className="filters" role="group" aria-label="Фильтр популярных моделей">
-            {equipmentFilters.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={equipmentFilter === item.id ? "filter filter--active" : "filter"}
-                onClick={() => setEquipmentFilter(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-
           <div className="catalog-grid">
-            {filteredEquipment.map((item, index) => (
+            {liftEquipment.map((item, index) => (
               <article className={`lift-card lift-card--${item.kind}`} key={item.id}>
                 <div className="lift-visual">
                   <img
@@ -412,7 +392,7 @@ export default function Home() {
                   <div className="lift-height">{item.shortSpec}</div>
                 </div>
                 <div className="lift-info">
-                  <p>{item.kind === "lift" ? "Автовышка" : "Автокран"}</p>
+                  <p>Автовышка</p>
                   <h3>{item.name}</h3>
                   <dl>
                     {item.specs.map(([label, value]) => (
@@ -456,7 +436,7 @@ export default function Home() {
               <h2>Техника<br />под <em>задачу</em></h2>
             </div>
           </div>
-          <div className="services-grid">
+          <div className="services-grid services-grid--single">
             {serviceItems.map((service, index) => (
               <Link className={`service-card service-card--${index + 1}`} href={service.href} key={service.href}>
                 <span>{service.number}</span>
@@ -528,8 +508,8 @@ export default function Home() {
             <p className="eyebrow eyebrow--light">Направления</p>
             <h2>Техника<br />в деле</h2>
             <p>
-              Основные группы техники для высотных, грузоподъёмных, земляных
-              и погрузочных работ.
+              Автовышки для фасадных, монтажных, коммунальных
+              и рекламных работ на высоте.
             </p>
           </div>
           <div className="works-grid">
@@ -600,7 +580,7 @@ export default function Home() {
             </p>
           </div>
           <div className="price-table">
-            {equipment.map((item, index) => (
+            {liftEquipment.map((item, index) => (
               <div className="price-row" key={item.id}>
                 <span>0{index + 1}</span>
                 <h3>{item.name}</h3>
@@ -624,7 +604,7 @@ export default function Home() {
             </div>
             <p className="section-intro">
               Практические материалы по выбору, подготовке площадки и безопасной
-              эксплуатации автовышек и другой спецтехники.
+              эксплуатации автовышек.
             </p>
           </div>
           <div className="articles-grid">
@@ -671,7 +651,7 @@ export default function Home() {
           <div className="contact-bottom">
             <p>
               Напишите или позвоните — уточним параметры и предложим подходящий
-              вариант спецтехники.
+               вариант автовышки.
             </p>
             <div className="contact-actions">
               <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp ↗︎</a>
@@ -701,12 +681,12 @@ export default function Home() {
               <small>Своевременная подача · Ведущие марки</small>
             </span>
           </Link>
-          <p>Аренда спецтехники<br />в Санкт-Петербурге и Ленинградской области.</p>
+          <p>Аренда автовышек<br />в Санкт-Петербурге и Ленинградской области.</p>
         </div>
         <div className="footer-column">
           <strong>Навигация</strong>
-          <Link href="/katalog-tekhniki">Каталог техники</Link>
-          <Link href="/services">Услуги</Link>
+          <Link href="/katalog-tekhniki">Каталог автовышек</Link>
+          <Link href="/services/arenda-avtovyshek">Аренда автовышек</Link>
           <Link href="/o-kompanii">О компании</Link>
           <Link href="/price">Цены</Link>
         </div>

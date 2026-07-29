@@ -31,7 +31,41 @@ type SourcePage = {
   images: SourceImage[];
 };
 
-const pages = sourceData.pages as SourcePage[];
+const excludedArticlePaths = new Set([
+  "/o-kompanii/stati-i-sovety/burenie",
+  "/o-kompanii/stati-i-sovety/burenie-skvazhin",
+  "/o-kompanii/stati-i-sovety/burovye-vyshki-montazh-i-ih-obsluzhivanie",
+  "/o-kompanii/stati-i-sovety/ekologicheskie-aspekty-ispolzovaniya",
+  "/o-kompanii/stati-i-sovety/innovatwii-i-rost",
+  "/o-kompanii/stati-i-sovety/musor",
+  "/o-kompanii/stati-i-sovety/planirovka",
+  "/o-kompanii/stati-i-sovety/podemniki-dlya-parkovok",
+  "/o-kompanii/stati-i-sovety/podymnik-na-sklade",
+  "/o-kompanii/stati-i-sovety/rol-professionalnogo-obucheniya",
+  "/o-kompanii/stati-i-sovety/snos-zdanei-ekskavatorom",
+  "/o-kompanii/stati-i-sovety/vidy-podemnoj-tekhniki",
+]);
+
+function isVisibleLiftPath(path: string) {
+  if (path.startsWith("/katalog-tekhniki/")) {
+    return (
+      path === "/katalog-tekhniki/avtovyshki" ||
+      path.startsWith("/katalog-tekhniki/avtovyshki/")
+    );
+  }
+
+  if (path.startsWith("/services/")) {
+    return path.includes("avtovysh");
+  }
+
+  if (path.startsWith("/tpost/")) return false;
+  if (path === "/populyarnye-modeli-specztekhniki") return false;
+  return !excludedArticlePaths.has(path);
+}
+
+const pages = (sourceData.pages as SourcePage[]).filter((page) =>
+  isVisibleLiftPath(page.path),
+);
 const phoneDisplay = "+7 (999) 008-88-84";
 const phoneHref = "tel:+79990088884";
 const whatsappHref = "https://wa.me/79990088884";
@@ -50,15 +84,15 @@ const utilityImages = new Set([
 const fallbackImages: Record<SourcePage["type"], SourceImage> = {
   catalog: {
     src: "/catalog/category-lift.webp",
-    alt: "Спецтехника ГРИНАВТО",
+    alt: "Автовышка ГРИНАВТО",
   },
   service: {
     src: "/catalog/lift-28-hq.jpg",
     alt: "Автовышка на объекте",
   },
   article: {
-    src: "/catalog/category-crane.webp",
-    alt: "Спецтехника для строительных работ",
+    src: "/catalog/lift-45-work-hq.webp",
+    alt: "Автовышка для высотных работ",
   },
   info: {
     src: "/catalog/lift-28-hq.jpg",
@@ -90,12 +124,28 @@ function sanitizeText(text: string) {
     )
     .replace(/\bHundai\b/g, "Hyundai")
     .replace(/\bэскаватор\b/gi, "экскаватор")
+    .replace(/различной спецтехники/gi, "автовышек разных моделей")
+    .replace(/аренды нашей спецтехники/gi, "аренды автовышек")
+    .replace(/аренд[аеуы] спецтехники/gi, "аренда автовышек")
+    .replace(/единиц спецтехники/gi, "автовышек в парке")
+    .replace(/качественной спецтехники/gi, "исправных автовышек")
+    .replace(/широкий выбор спецтехники/gi, "широкий выбор автовышек")
+    .replace(/спецтехникой/gi, "автовышкой")
+    .replace(/спецтехнику/gi, "автовышку")
+    .replace(/спецтехники/gi, "автовышек")
+    .replace(/спецтехника/gi, "автовышка")
     .replace(/\bм\s*3\b/gi, "м³")
     .replace(/(\d)\s*р\/ч\s*р\.?/gi, "$1 ₽/ч")
     .replace(/(\d)\s*р\.(?=\s|$)/gi, "$1 ₽")
     .replace(/\s+:/g, ":")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function mentionsRemovedDirection(text: string) {
+  return /автокран|гусеничн(?:ый|ые) кран|экскаватор|погрузчик|разработк[аи] котлован|планировк[аи] земл|бурени[ея]|вывоз (?:грунта|спила|строительного мусора)|земляные работы|сыпучих материал/i.test(
+    text,
+  );
 }
 
 function findPage(slug: string[]) {
@@ -111,7 +161,7 @@ function cleanTitle(title: string) {
 }
 
 function getDisplayTitle(page: SourcePage) {
-  if (page.path === "/services") return "Услуги спецтехники";
+  if (page.path === "/services") return "Аренда автовышек";
 
   const matchedService = serviceItems.find(
     (service) => service.href === page.path,
@@ -142,6 +192,7 @@ function contentFor(page: SourcePage, displayTitle: string) {
     .map((block) => ({ ...block, text: sanitizeText(block.text) }))
     .filter((block) => {
     if (isBreadcrumb(block)) return false;
+    if (mentionsRemovedDirection(block.text)) return false;
     if (
       !skippedTitle &&
       block.kind === "heading" &&
@@ -355,24 +406,15 @@ function StructuredContent({
 }
 
 const catalogCategoryOrder = [
-  "truck-cranes",
-  "crawler-cranes",
   "aerial-lifts",
-  "wheel-excavators",
-  "crawler-excavators",
-  "backhoe-loaders",
-  "forklifts",
-  "mini-loaders",
-  "front-loaders",
 ];
 
 const catalogFeaturedOrder = [
   "lift-12",
+  "lift-18",
   "lift-28",
+  "lift-45",
   "lift-50",
-  "crane-16",
-  "crane-25",
-  "crane-50",
 ];
 
 function CatalogIndex() {
@@ -386,14 +428,14 @@ function CatalogIndex() {
   return (
     <div className="catalog-index">
       <section className="catalog-index-intro">
-        <p>Аренда спецтехники · Санкт-Петербург и Ленинградская область</p>
-        <h1>Каталог спецтехники</h1>
+        <p>Аренда автовышек · Санкт-Петербург и Ленинградская область</p>
+        <h1>Каталог автовышек</h1>
         <div>
           <p>
-            Автовышки, краны, экскаваторы и погрузчики для строительных,
-            высотных, земляных и погрузочных работ.
+            Автовышки высотой от 12 до 60 метров для монтажных, фасадных,
+            коммунальных и других высотных работ.
           </p>
-          <a href={phoneHref}>Подобрать технику ↗︎</a>
+          <a href={phoneHref}>Подобрать автовышку ↗︎</a>
         </div>
       </section>
 
@@ -402,10 +444,10 @@ function CatalogIndex() {
         aria-labelledby="catalog-categories-title"
       >
         <div className="catalog-index-heading">
-          <h2 id="catalog-categories-title">Выберите категорию</h2>
-          <p>Девять основных направлений техники в одном каталоге.</p>
+          <h2 id="catalog-categories-title">Автовышки</h2>
+          <p>Выберите модель по рабочей высоте и условиям объекта.</p>
         </div>
-        <div className="catalog-index-category-grid">
+        <div className="catalog-index-category-grid catalog-index-category-grid--single">
           {orderedCategories.map((category) => (
             <Link
               className="catalog-index-category-card"
@@ -439,7 +481,7 @@ function CatalogIndex() {
         aria-labelledby="catalog-featured-title"
       >
         <div className="catalog-index-heading">
-          <h2 id="catalog-featured-title">Популярная техника</h2>
+          <h2 id="catalog-featured-title">Популярные автовышки</h2>
           <p>Характеристики и стоимость востребованных моделей.</p>
         </div>
         <div className="catalog-index-product-grid">
@@ -484,18 +526,18 @@ function CatalogIndex() {
       <section className="catalog-index-about">
         <div>
           <span>О каталоге</span>
-          <h2>Техника под задачу и условия объекта</h2>
+          <h2>Автовышка под задачу и условия объекта</h2>
         </div>
         <div>
           <p>
             В каталоге собраны модели с разной рабочей высотой,
-            грузоподъёмностью, рабочим радиусом и объёмом ковша. Это позволяет
-            подобрать машину для высотных, грузоподъёмных, земляных и
-            погрузочных работ.
+            грузоподъёмностью люльки и рабочим вылетом стрелы. Это позволяет
+            подобрать автовышку для фасадных, монтажных, коммунальных и
+            рекламных работ.
           </p>
           <p>
-            Техника предоставляется с опытным оператором. До подачи
-            согласовываем характеристики машины, график, стоимость, условия
+            Автовышка предоставляется с опытным оператором. До подачи
+            согласовываем характеристики модели, график, стоимость, условия
             подъезда и требования рабочей площадки.
           </p>
         </div>
@@ -513,12 +555,12 @@ function CatalogIndex() {
         <article>
           <strong>02</strong>
           <h3>Быстрая подача</h3>
-          <p>Подбираем ближайшую подходящую технику под ваш объект.</p>
+          <p>Подбираем ближайшую подходящую автовышку под ваш объект.</p>
         </article>
         <article>
           <strong>03</strong>
           <h3>Широкий выбор</h3>
-          <p>Автовышки, краны, экскаваторы и погрузчики разных классов.</p>
+          <p>Автовышки с рабочей высотой от 12 до 60 метров.</p>
         </article>
         <article>
           <strong>04</strong>
@@ -545,20 +587,23 @@ export async function generateMetadata({
 
   const structuredContent = structuredPages[page.path];
   const firstModel = structuredContent?.models?.[0];
+  const metadataTitle = structuredContent?.title ?? cleanTitle(page.title);
+  const metadataDescription =
+    structuredContent?.intro[0] ?? sanitizeText(page.description);
   const image =
     structuredContent?.media?.hero ??
     (firstModel
       ? { src: firstModel.image, alt: firstModel.alt }
       : imagesFor(page)[0]);
   return {
-    title: `${cleanTitle(page.title)} | ГРИНАВТО`,
-    description: sanitizeText(page.description),
+    title: `${metadataTitle} | ГРИНАВТО`,
+    description: metadataDescription,
     alternates: { canonical: page.path },
     openGraph: {
-      title: cleanTitle(page.title),
-      description: sanitizeText(page.description),
+      title: metadataTitle,
+      description: metadataDescription,
       type: page.type === "article" ? "article" : "website",
-      images: [{ url: image.src, alt: image.alt || cleanTitle(page.title) }],
+      images: [{ url: image.src, alt: image.alt || metadataTitle }],
     },
   };
 }
@@ -667,7 +712,7 @@ export default async function ImportedSourcePage({
         <div className="source-facts" aria-label="Условия работы">
           <span><strong>24/7</strong> принимаем заявки</span>
           <span><strong>СПб + ЛО</strong> география работы</span>
-          <span><strong>1 звонок</strong> для подбора техники</span>
+          <span><strong>1 звонок</strong> для подбора автовышки</span>
         </div>
 
         {isServicesIndex && (
@@ -675,10 +720,10 @@ export default async function ImportedSourcePage({
             <div className="source-services-heading">
               <div>
                 <h2 id="services-index-title">Работы на вашем объекте</h2>
-                <p>Подберём технику, экипаж и состав работ под задачу в Санкт-Петербурге и Ленинградской области.</p>
+                <p>Подберём автовышку и рабочую высоту под задачу в Санкт-Петербурге и Ленинградской области.</p>
               </div>
             </div>
-            <div className="source-services-grid">
+            <div className="source-services-grid source-services-grid--single">
               {serviceItems.map((service) => (
                 <Link href={service.href} key={service.href}>
                   <figure>
@@ -787,7 +832,7 @@ export default async function ImportedSourcePage({
 
         <section className="source-cta">
           <div>
-            <span>Подберём технику под объект</span>
+            <span>Подберём автовышку под объект</span>
             <h2>Один звонок —<br />и машина в работе</h2>
           </div>
           <div className="source-cta-contact">
@@ -821,12 +866,12 @@ export default async function ImportedSourcePage({
               <small>Своевременная подача · Ведущие марки</small>
             </span>
           </Link>
-          <p>Аренда спецтехники в Санкт-Петербурге и Ленинградской области.</p>
+          <p>Аренда автовышек в Санкт-Петербурге и Ленинградской области.</p>
         </div>
         <div>
           <strong>Разделы</strong>
-          <Link href="/katalog-tekhniki">Каталог техники</Link>
-          <Link href="/services">Услуги</Link>
+          <Link href="/katalog-tekhniki">Каталог автовышек</Link>
+          <Link href="/services/arenda-avtovyshek">Аренда автовышек</Link>
           <Link href="/price">Цены</Link>
           <Link href="/dostavka">Доставка</Link>
         </div>

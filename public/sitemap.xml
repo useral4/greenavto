@@ -5,10 +5,6 @@
   <url><loc>https://greenavto.onrender.com/consent</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/dostavka</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtokrany</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtokrany/arenda-avtokrana-16t</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtokrany/arenda-avtokrana-25t</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtokrany/arenda-avtokrana-50t</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtovyshki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtovyshki/arenda-avtovyshki-12m</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtovyshki/arenda-avtovyshki-15m</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -24,13 +20,6 @@
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtovyshki/arenda-avtovyshki-45m</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtovyshki/arenda-avtovyshki-50m</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/katalog-tekhniki/avtovyshki/arenda-avtovyshki-60m</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/ekskavatory-pogruzchiki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/frontalnye-pogruzchiki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/gusenichnye-ekskavatory</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/gusenichnye-krany</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/kolesnyj-ekskavator</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/mini-pogruzchiki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/katalog-tekhniki/vilochnye-pogruzchiki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/kontakty</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/kak-opredelit-neobhodimuyu-vysotu-avtovyshki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -40,35 +29,22 @@
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/avtovyshka-dlya-rabot-s-nesushhimi-konstrukcziyami</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/avtovyshka-kharakteristiki-i-klassifikacziya</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/avtovyshki-dlya-fasadnykh-rabot</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/burenie</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/burenie-skvazhin</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/burovye-vyshki-montazh-i-ih-obsluzhivanie</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/chem-avtovyshka-otlichaetsya-ot-avtogidropodemnika</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/ekologicheskie-aspekty-ispolzovaniya</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/innovatwii-i-rost</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/ispolzovnie-avtovyshek</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/istoriya-sozdaniya-avtovyshek</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/kak-pravilno-zakazat-avtovyshku</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/kak-ustanavlivaetsya-avtovyshka-dlya-vysotnykh-rabot</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/kak-vybrat-podkhodyashhuyu-avtovyshku</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/kakie-nuzhny-dokumenty-dlya-raboty-s-avtovyshkoj</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/musor</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/na-kakuyu-vysotu-mozhet-podnyatsya-avtovyshka</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/osobennosti-ekspluataczii-v-temnoe-vremya-sutok</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/osobennosti-upravleniya-avtovyshkoj</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/planirovka</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/podemniki-dlya-parkovok</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/podymnik-na-sklade</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/pokupka-arenda-avtovyshki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/rabotaavtovyshki-razlichnyh-pogodnyh-usloviyah</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/razvitie-avtovyshek</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/rol-professionalnogo-obucheniya</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/snos-zdanei-ekskavatorom</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/teleskopicheskie</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/uborochnye-i-kommunalnye-raboty</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/o-kompanii/stati-i-sovety/vidy-podemnoj-tekhniki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/o-kompanii/usloviya-oplaty</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/populyarnye-modeli-specztekhniki</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/portfolio</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/price</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/services</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -76,15 +52,5 @@
   <url><loc>https://greenavto.onrender.com/services/arenda-avtovyshek-dlya-remonta-balkona</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/services/arenda-avtovyshki-20m</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/services/arenda-avtovyshki-dlya-vysotnyh-rabot</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/arenda-vibroplit</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://greenavto.onrender.com/services/avtovyshka-kamaz-75-metrov</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/burenie</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/perevozka-sypuchih-materilov</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/planirovka-zemli</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/razrabotka-kotlovana-shpuntovanie</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/razrabotka-vodoema-spectehnikoy</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/vyvoz-grunta</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/vyvoz-spila</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/services/vyvoz-stroitelnogo-musora</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://greenavto.onrender.com/tpost/luc77td891-obzor-rinka-arendi-spetstehniki-v-2024-g</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

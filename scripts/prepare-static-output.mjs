@@ -7,10 +7,40 @@ const data = JSON.parse(
   await readFile(path.join(projectRoot, "app", "data", "source-pages.json"), "utf8"),
 );
 
+const excludedArticlePaths = new Set([
+  "/o-kompanii/stati-i-sovety/burenie",
+  "/o-kompanii/stati-i-sovety/burenie-skvazhin",
+  "/o-kompanii/stati-i-sovety/burovye-vyshki-montazh-i-ih-obsluzhivanie",
+  "/o-kompanii/stati-i-sovety/ekologicheskie-aspekty-ispolzovaniya",
+  "/o-kompanii/stati-i-sovety/innovatwii-i-rost",
+  "/o-kompanii/stati-i-sovety/musor",
+  "/o-kompanii/stati-i-sovety/planirovka",
+  "/o-kompanii/stati-i-sovety/podemniki-dlya-parkovok",
+  "/o-kompanii/stati-i-sovety/podymnik-na-sklade",
+  "/o-kompanii/stati-i-sovety/rol-professionalnogo-obucheniya",
+  "/o-kompanii/stati-i-sovety/snos-zdanei-ekskavatorom",
+  "/o-kompanii/stati-i-sovety/vidy-podemnoj-tekhniki",
+]);
+
+function isVisibleLiftPath(route) {
+  if (route.startsWith("/katalog-tekhniki/")) {
+    return (
+      route === "/katalog-tekhniki/avtovyshki" ||
+      route.startsWith("/katalog-tekhniki/avtovyshki/")
+    );
+  }
+  if (route.startsWith("/services/")) return route.includes("avtovysh");
+  if (route.startsWith("/tpost/")) return false;
+  if (route === "/populyarnye-modeli-specztekhniki") return false;
+  return !excludedArticlePaths.has(route);
+}
+
 const publicPaths = [
   "/privacy",
   "/consent",
-  ...data.pages.map((page) => page.path),
+  ...data.pages
+    .filter((page) => isVisibleLiftPath(page.path))
+    .map((page) => page.path),
 ];
 
 for (const route of publicPaths) {
