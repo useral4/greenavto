@@ -220,7 +220,7 @@ export default function Home() {
         </nav>
 
         <a className="header-cta" href="#request">
-          Рассчитать стоимость <span aria-hidden="true">↗</span>
+          Рассчитать стоимость <span aria-hidden="true">↗︎</span>
         </a>
 
         <button
@@ -258,7 +258,7 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <a className="button button--green" href="#request">
-                Подобрать технику <span aria-hidden="true">↗</span>
+                Подобрать технику <span aria-hidden="true">↗︎</span>
               </a>
               <a className="text-link text-link--light" href={phoneHref}>
                 Позвонить <span aria-hidden="true">→</span>
@@ -284,11 +284,11 @@ export default function Home() {
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
-            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
-            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
-            <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗</i>
-            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗</i>
-            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗</i>
+            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗︎</i>
+            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗︎</i>
+            <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗︎</i>
+            <span>АРЕНДА СПЕЦТЕХНИКИ</span><i>↗︎</i>
+            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗︎</i>
           </div>
         </div>
 
@@ -324,7 +324,7 @@ export default function Home() {
               </span>
             </label>
             <button className="button button--dark form-wide" type="submit">
-              Отправить заявку <span aria-hidden="true">↗</span>
+              Отправить заявку <span aria-hidden="true">↗︎</span>
             </button>
             {submitted && (
               <p className="form-status form-wide" role="status">
@@ -370,7 +370,7 @@ export default function Home() {
                 <div className="category-copy">
                   <h3>{category.name}</h3>
                   <p>от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч</p>
-                  <span className="category-arrow" aria-hidden="true">↗</span>
+                  <span className="category-arrow" aria-hidden="true">↗︎</span>
                 </div>
               </a>
             ))}
@@ -421,7 +421,7 @@ export default function Home() {
                     <div><dt>Доставка</dt><dd>договорная</dd></div>
                   </dl>
                   <p className="model-price">от {item.price.toLocaleString("ru-RU")} ₽</p>
-                  <Link className="card-link" href={item.href}>Подробнее <span>↗</span></Link>
+                  <Link className="card-link" href={item.href}>Подробнее <span>↗︎</span></Link>
                 </div>
               </article>
             ))}
@@ -464,7 +464,7 @@ export default function Home() {
                   <h3>{service.title}</h3>
                   <p>{service.description}</p>
                 </div>
-                <i aria-hidden="true">↗</i>
+                <i aria-hidden="true">↗︎</i>
               </Link>
             ))}
           </div>
@@ -606,7 +606,7 @@ export default function Home() {
                 <h3>{item.name}</h3>
                 <p>{item.shortSpec}</p>
                 <strong>от {item.price.toLocaleString("ru-RU")} ₽</strong>
-                <a href="#request" aria-label={`Узнать стоимость: ${item.name}`}>↗</a>
+                <a href="#request" aria-label={`Узнать стоимость: ${item.name}`}>↗︎</a>
               </div>
             ))}
           </div>
@@ -633,12 +633,12 @@ export default function Home() {
                 <span>{article.number}</span>
                 <h3>{article.title}</h3>
                 <p>{article.text}</p>
-                <i aria-hidden="true">↗</i>
+                <i aria-hidden="true">↗︎</i>
               </Link>
             ))}
           </div>
           <Link className="button button--dark articles-all" href="/o-kompanii/stati-i-sovety">
-            Все статьи <span aria-hidden="true">↗</span>
+            Все статьи <span aria-hidden="true">↗︎</span>
           </Link>
         </section>
 
@@ -674,8 +674,8 @@ export default function Home() {
               вариант спецтехники.
             </p>
             <div className="contact-actions">
-              <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp ↗</a>
-              <a className="button button--outline" href={telegramHref} target="_blank" rel="noreferrer">Telegram ↗</a>
+              <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp ↗︎</a>
+              <a className="button button--outline" href={telegramHref} target="_blank" rel="noreferrer">Telegram ↗︎</a>
             </div>
           </div>
           <div className="contact-art" aria-hidden="true">

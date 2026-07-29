@@ -76,6 +76,14 @@ test("exports every public route as static HTML", async () => {
   await Promise.all(
     publicPagePaths.map((page) => access(path.join(staticRoot, page))),
   );
+  for (const pagePath of publicPagePaths) {
+    const html = await readStaticPage(pagePath);
+    assert.doesNotMatch(
+      html,
+      /\u2197(?!\uFE0E)/u,
+      `Emoji-style diagonal arrow on ${pagePath}`,
+    );
+  }
 
   const home = await readStaticPage("index.html");
   assert.match(home, /<html lang="ru">/);

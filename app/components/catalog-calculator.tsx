@@ -57,7 +57,7 @@ export function CatalogCalculator() {
           <strong>{total.toLocaleString("ru-RU")} ₽</strong>
         </div>
         <a href="tel:+79990088884">
-          Уточнить расчёт <span aria-hidden="true">↗</span>
+          Уточнить расчёт <span aria-hidden="true">↗︎</span>
         </a>
       </div>
     </div>

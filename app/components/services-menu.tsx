@@ -27,13 +27,13 @@ function DropdownMenu({
         <Link className="services-menu-all" href={href}>
           <span>00</span>
           <strong>{allLabel}</strong>
-          <i aria-hidden="true">↗</i>
+          <i aria-hidden="true">↗︎</i>
         </Link>
         {items.map((item, index) => (
           <Link href={item.href} key={item.href}>
             <span>{String(index + 1).padStart(2, "0")}</span>
             <strong>{item.label}</strong>
-            <i aria-hidden="true">↗</i>
+            <i aria-hidden="true">↗︎</i>
           </Link>
         ))}
       </div>

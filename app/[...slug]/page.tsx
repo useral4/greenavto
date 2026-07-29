@@ -393,7 +393,7 @@ function CatalogIndex() {
             Автовышки, краны, экскаваторы и погрузчики для строительных,
             высотных, земляных и погрузочных работ.
           </p>
-          <a href={phoneHref}>Подобрать технику ↗</a>
+          <a href={phoneHref}>Подобрать технику ↗︎</a>
         </div>
       </section>
 
@@ -427,7 +427,7 @@ function CatalogIndex() {
                 <p>
                   от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч
                 </p>
-                <span>Подробнее ↗</span>
+                <span>Подробнее ↗︎</span>
               </div>
             </Link>
           ))}
@@ -469,7 +469,7 @@ function CatalogIndex() {
                 </dl>
                 <footer>
                   <strong>от {item.price.toLocaleString("ru-RU")} ₽</strong>
-                  <Link href={item.href}>Заказать ↗</Link>
+                  <Link href={item.href}>Заказать ↗︎</Link>
                 </footer>
               </div>
             </article>
@@ -634,7 +634,7 @@ export default async function ImportedSourcePage({
             </p>
             <div className="source-actions">
               <a className="button button--green" href={phoneHref}>
-                Позвонить <span aria-hidden="true">↗</span>
+                Позвонить <span aria-hidden="true">↗︎</span>
               </a>
               <a
                 className="button source-button-outline"
@@ -642,7 +642,7 @@ export default async function ImportedSourcePage({
                 target="_blank"
                 rel="noreferrer"
               >
-                Написать в WhatsApp <span aria-hidden="true">↗</span>
+                Написать в WhatsApp <span aria-hidden="true">↗︎</span>
               </a>
             </div>
           </div>
@@ -693,7 +693,7 @@ export default async function ImportedSourcePage({
                   <div>
                     <h2>{service.title}</h2>
                     <p>{service.description}</p>
-                    <i aria-hidden="true">↗</i>
+                    <i aria-hidden="true">↗︎</i>
                   </div>
                 </Link>
               ))}
@@ -776,7 +776,7 @@ export default async function ImportedSourcePage({
               {visibleRelated.map((item) => (
                 <Link href={item.path} key={item.path}>
                   <strong>{cleanTitle(item.title)}</strong>
-                  <i aria-hidden="true">↗</i>
+                  <i aria-hidden="true">↗︎</i>
                 </Link>
               ))}
             </div>
@@ -795,10 +795,10 @@ export default async function ImportedSourcePage({
             <p>Позвоните или напишите — уточним задачу, подберём модель и рассчитаем стоимость.</p>
             <div className="source-actions">
               <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">
-                WhatsApp ↗
+                WhatsApp ↗︎
               </a>
               <a className="button source-button-outline" href={telegramHref} target="_blank" rel="noreferrer">
-                Telegram ↗
+                Telegram ↗︎
               </a>
             </div>
           </div>
