@@ -552,12 +552,12 @@ h2 em {
 
 .motion-ready [data-motion="from-left"] {
   clip-path: inset(0 100% 0 0);
-  transform: translate3d(-26px, 0, 0);
+  transform: translate3d(0, 24px, 0);
 }
 
 .motion-ready [data-motion="from-right"] {
   clip-path: inset(0 0 0 100%);
-  transform: translate3d(26px, 0, 0);
+  transform: translate3d(0, 24px, 0);
 }
 
 .motion-ready [data-motion="card"] {
