@@ -15,13 +15,6 @@ const sourceData = JSON.parse(
     "utf8",
   ),
 );
-const homeArchiveMedia = JSON.parse(
-  await readFile(
-    path.join(projectRoot, "app", "data", "home-archive-media.json"),
-    "utf8",
-  ),
-);
-
 const sourcePagePaths = sourceData.pages.map(
   (page) => `${page.path.replace(/^\//, "")}/index.html`,
 );
@@ -81,10 +74,7 @@ test("exports every public route as static HTML", async () => {
   assert.match(home, /https:\/\/greenavto\.onrender\.com\/og-green\.png/);
   assert.match(home, /<form class="request-form">/);
   assert.match(home, /Популярные модели/);
-  assert.ok(homeArchiveMedia.images.length >= 60);
-  for (const image of homeArchiveMedia.images) {
-    assert.ok(home.includes(`src="${image.src}"`));
-  }
+  assert.doesNotMatch(home, /Все изображения|из архива|Материалы исходного сайта/);
   for (const route of [...catalogMenuRoutes, ...serviceRoutes]) {
     assert.match(home, new RegExp(`href="${route}"`));
   }
@@ -161,11 +151,21 @@ test("every imported text block and content image is rendered", async () => {
       );
     }
 
-    for (const image of page.images) {
-      if (utilityImages.has(image.src)) continue;
-      assert.ok(
-        html.includes(`src="${image.src}"`),
-        `Missing image on ${page.path}: ${image.src}`,
+    const contentImages = page.images.filter(
+      (image) => !utilityImages.has(image.src),
+    );
+    if (contentImages.length > 0) {
+      assert.match(
+        html,
+        /<figure class="source-hero-media"><img[^>]+src="\/[^"]+"/,
+        `Missing primary image on ${page.path}`,
+      );
+    }
+    if (page.type === "catalog" || page.type === "service") {
+      assert.doesNotMatch(
+        html,
+        /class="source-gallery"/,
+        `Unexpected gallery on ${page.path}`,
       );
     }
   }

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { SiteNavigationLinks } from "./components/services-menu";
-import homeArchiveMedia from "./data/home-archive-media.json";
 import { categories, equipment } from "./data/lifts";
 import { serviceItems } from "./data/services";
 
@@ -211,7 +210,7 @@ export default function Home() {
           />
           <span className="brand-copy">
             <strong>ГРИНАВТО</strong>
-            <small>Своевременная подача · Техника ведущих марок</small>
+            <small>Своевременная подача · Ведущие марки</small>
           </span>
         </Link>
 
@@ -351,7 +350,12 @@ export default function Home() {
 
           <div className="category-grid">
             {categories.map((category, index) => (
-              <article className="category-card" key={category.id}>
+              <a
+                className="category-card"
+                href={category.href}
+                key={category.id}
+                aria-label={`Открыть раздел: ${category.name}`}
+              >
                 <div className="category-media">
                   <img
                     src={category.image}
@@ -367,9 +371,9 @@ export default function Home() {
                 <div className="category-copy">
                   <h3>{category.name}</h3>
                   <p>от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч</p>
-                  <Link href={category.href} aria-label={`Открыть раздел: ${category.name}`}>↗</Link>
+                  <span className="category-arrow" aria-hidden="true">↗</span>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
 
@@ -639,42 +643,6 @@ export default function Home() {
           </Link>
         </section>
 
-        <section className="archive-media-section" aria-labelledby="archive-media-title">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow eyebrow--light">Материалы исходного сайта</p>
-              <h2 id="archive-media-title">Все изображения<br /><em>из архива</em></h2>
-            </div>
-            <p className="section-intro">
-              Фотографии техники, выполненных работ, документов и партнёров.
-              Изображения показаны компактно и не растягиваются больше исходного размера.
-            </p>
-          </div>
-          <div
-            className="archive-media-rail"
-            tabIndex={0}
-            aria-label="Галерея изображений исходного сайта"
-          >
-            {homeArchiveMedia.images.map((image, index) => (
-              <figure key={image.src}>
-                <div>
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <figcaption>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  {image.alt}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-          <p className="archive-media-hint">Прокрутите галерею по горизонтали →</p>
-        </section>
-
         <section className="faq-section" id="faq">
           <div className="faq-heading">
             <p className="eyebrow">Вопросы и ответы</p>
@@ -731,7 +699,7 @@ export default function Home() {
             />
             <span className="brand-copy">
               <strong>ГРИНАВТО</strong>
-              <small>Своевременная подача · Техника ведущих марок</small>
+              <small>Своевременная подача · Ведущие марки</small>
             </span>
           </Link>
           <p>Аренда спецтехники<br />в Санкт-Петербурге и Ленинградской области.</p>

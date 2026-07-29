@@ -21,7 +21,7 @@ function DropdownMenu({
   return (
     <details className="services-menu">
       <summary>
-        {label} <span aria-hidden="true">⌄</span>
+        {label} <span aria-hidden="true" />
       </summary>
       <div className="services-menu-panel">
         <Link className="services-menu-all" href={href}>

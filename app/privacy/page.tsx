@@ -7,7 +7,7 @@ export default function PrivacyPage() {
         <img className="brand-logo" src="/brand-clover.webp" width="48" height="48" alt="" aria-hidden="true" />
         <span className="brand-copy">
           <strong>ГРИНАВТО</strong>
-          <small>Своевременная подача · Техника ведущих марок</small>
+          <small>Своевременная подача · Ведущие марки</small>
         </span>
       </Link>
       <article>

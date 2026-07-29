@@ -248,6 +248,9 @@ export default async function ImportedSourcePage({
   const images = imagesFor(page);
   const heroImage = images[0];
   const gallery = images.slice(1);
+  const showGallery =
+    (page.type === "article" || page.type === "info") &&
+    gallery.length > 0;
   const breadcrumbs = getBreadcrumbs(page);
   const related = getRelated(page);
   const isServicesIndex = page.path === "/services";
@@ -271,7 +274,7 @@ export default async function ImportedSourcePage({
           />
           <span className="brand-copy">
             <strong>ГРИНАВТО</strong>
-            <small>Своевременная подача · Техника ведущих марок</small>
+            <small>Своевременная подача · Ведущие марки</small>
           </span>
         </Link>
 
@@ -326,10 +329,6 @@ export default async function ImportedSourcePage({
               height="900"
               fetchPriority="high"
             />
-            <figcaption>
-              <span>01</span>
-              Техника для вашей задачи
-            </figcaption>
           </figure>
         </section>
 
@@ -397,7 +396,7 @@ export default async function ImportedSourcePage({
           </article>
         </section>
 
-        {gallery.length > 0 && (
+        {showGallery && (
           <section className="source-gallery" aria-labelledby="source-gallery-title">
             <div className="source-section-heading">
               <span>03 / Фотографии</span>
@@ -472,7 +471,7 @@ export default async function ImportedSourcePage({
             />
             <span className="brand-copy">
               <strong>ГРИНАВТО</strong>
-              <small>Своевременная подача · Техника ведущих марок</small>
+              <small>Своевременная подача · Ведущие марки</small>
             </span>
           </Link>
           <p>Аренда спецтехники в Санкт-Петербурге и Ленинградской области.</p>
