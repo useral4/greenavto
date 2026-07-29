@@ -42,6 +42,15 @@ const catalogMenuRoutes = [
   "/katalog-tekhniki/frontalnye-pogruzchiki",
 ];
 
+const structuredPagePaths = new Set([
+  "/katalog-tekhniki",
+  "/services",
+  ...serviceRoutes,
+  ...catalogMenuRoutes,
+  "/katalog-tekhniki/avtovyshki/arenda-avtovyshki-12m",
+  "/katalog-tekhniki/avtovyshki/arenda-avtovyshki-45m",
+]);
+
 const utilityImages = new Set([
   "/source/09119685ade63ac1.webp",
   "/source/87a5d859adfc2cbe.webp",
@@ -116,6 +125,27 @@ test("exports every public route as static HTML", async () => {
     "o-kompanii/otzyvy-o-nas/index.html",
   );
   assert.doesNotMatch(reviews, /class="source-gallery"/);
+
+  for (const route of structuredPagePaths) {
+    const html = await readStaticPage(`${route.slice(1)}/index.html`);
+    assert.match(html, /class="source-structured"/);
+    assert.doesNotMatch(
+      html,
+      /сео специалист|р\/ч р\.|Введите ваш номер, чтобы мы отправили вам каталог/i,
+    );
+  }
+
+  for (const route of catalogMenuRoutes) {
+    const html = await readStaticPage(`${route.slice(1)}/index.html`);
+    assert.match(html, /class="source-models"/);
+    assert.match(html, /class="source-model-footer"/);
+  }
+
+  const lift12 = await readStaticPage(
+    "katalog-tekhniki/avtovyshki/arenda-avtovyshki-12m/index.html",
+  );
+  assert.match(lift12, /class="source-highlights"/);
+  assert.match(lift12, /class="source-inline-media/);
 });
 
 function decodeHtml(value) {
@@ -144,6 +174,15 @@ function plainText(html) {
 function sanitizeImportedText(value) {
   return value
     .replace(/[█▀▄▌▐░▒▓▬]+/g, " ")
+    .replace(/\b(КАЧЕСТВО|СТОИМОСТЬ|ГРУНТА)\b/g, (word) =>
+      word.toLocaleLowerCase("ru"),
+    )
+    .replace(/\bHundai\b/g, "Hyundai")
+    .replace(/\bэскаватор\b/gi, "экскаватор")
+    .replace(/\bм\s*3\b/gi, "м³")
+    .replace(/(\d)\s*р\/ч\s*р\.?/gi, "$1 ₽/ч")
+    .replace(/(\d)\s*р\.(?=\s|$)/gi, "$1 ₽")
+    .replace(/\s+:/g, ":")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -154,7 +193,7 @@ test("every imported text block and content image is rendered", async () => {
     const html = await readStaticPage(relativePath);
     const text = plainText(html);
 
-    for (const block of page.path === "/price" ? [] : page.blocks) {
+    for (const block of page.path === "/price" || structuredPagePaths.has(page.path) ? [] : page.blocks) {
       if (
         block.kind === "list" &&
         (

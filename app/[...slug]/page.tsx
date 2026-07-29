@@ -4,6 +4,10 @@ import { notFound } from "next/navigation";
 import { SiteNavigationLinks } from "../components/services-menu";
 import { serviceItems } from "../data/services";
 import sourceData from "../data/source-pages.json";
+import {
+  structuredPages,
+  type StructuredPageContent,
+} from "../data/structured-pages";
 
 type ContentBlock = {
   kind: "heading" | "paragraph" | "list";
@@ -79,6 +83,15 @@ const priceRows = [
 function sanitizeText(text: string) {
   return text
     .replace(/[█▀▄▌▐░▒▓▬]+/g, " ")
+    .replace(/\b(КАЧЕСТВО|СТОИМОСТЬ|ГРУНТА)\b/g, (word) =>
+      word.toLocaleLowerCase("ru"),
+    )
+    .replace(/\bHundai\b/g, "Hyundai")
+    .replace(/\bэскаватор\b/gi, "экскаватор")
+    .replace(/\bм\s*3\b/gi, "м³")
+    .replace(/(\d)\s*р\/ч\s*р\.?/gi, "$1 ₽/ч")
+    .replace(/(\d)\s*р\.(?=\s|$)/gi, "$1 ₽")
+    .replace(/\s+:/g, ":")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -211,6 +224,134 @@ function getRelated(page: SourcePage) {
   return [...sameParent, ...sameType].slice(0, 6);
 }
 
+function InlineMedia({
+  images,
+  title,
+}: {
+  images: SourceImage[];
+  title: string;
+}) {
+  if (images.length === 0) return null;
+
+  return (
+    <div className={`source-inline-media${images.length === 1 ? " source-inline-media--single" : ""}`}>
+      {images.map((image, index) => (
+        <figure key={image.src}>
+          <img
+            src={image.src}
+            alt={image.alt || `${title} — пример ${index + 1}`}
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      ))}
+    </div>
+  );
+}
+
+function StructuredContent({
+  content,
+  images,
+  title,
+}: {
+  content: StructuredPageContent;
+  images: SourceImage[];
+  title: string;
+}) {
+  return (
+    <div className="source-structured">
+      <div className="source-structured-intro">
+        {content.intro.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </div>
+
+      {content.highlights && (
+        <dl className="source-highlights">
+          {content.highlights.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {!content.models && <InlineMedia images={images} title={title} />}
+
+      {content.models && (
+        <div className="source-models">
+          {content.models.map((model) => (
+            <article className="source-model-card" key={model.name}>
+              <figure>
+                <img
+                  src={model.image}
+                  alt={model.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+              <div className="source-model-card-copy">
+                <h2>{model.name}</h2>
+                <dl>
+                  {model.specs.map(([label, value]) => (
+                    <div key={`${model.name}-${label}`}>
+                      <dt>{label}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {model.equipment && (
+                  <div className="source-model-equipment">
+                    {model.equipment.map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                  </div>
+                )}
+                <div className="source-model-footer">
+                  <strong>{model.price}</strong>
+                  <a href={phoneHref}>Заказать</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {content.links && (
+        <section className="source-height-links" aria-labelledby="height-links-title">
+          <h2 id="height-links-title">
+            {content.linksTitle ?? "Автовышки по высоте"}
+          </h2>
+          <div>
+            {content.links.map((item) => (
+              <Link href={item.href} key={item.href}>
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {content.sections.map((section) => (
+        <section className="source-structured-section" key={section.title}>
+          <h2>{section.title}</h2>
+          {section.paragraphs?.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          {section.items && (
+            <ul>
+              {section.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+    </div>
+  );
+}
+
 export function generateStaticParams() {
   return pages.map((page) => ({ slug: page.slug }));
 }
@@ -247,10 +388,13 @@ export default async function ImportedSourcePage({
   const page = findPage(slug);
   if (!page) notFound();
 
-  const displayTitle = getDisplayTitle(page);
+  const structuredContent = structuredPages[page.path];
+  const displayTitle = structuredContent?.title ?? getDisplayTitle(page);
   const content = contentFor(page, displayTitle);
   const images = imagesFor(page);
   const heroImage = images[0];
+  const inlineImages = images.slice(1, 3);
+  const structuredImages = inlineImages.length > 0 ? inlineImages : [heroImage];
   const related = getRelated(page);
   const isServicesIndex = page.path === "/services";
   const isPricePage = page.path === "/price";
@@ -288,10 +432,12 @@ export default async function ImportedSourcePage({
       </header>
 
       <main>
-        <section className="source-hero">
+        <section className={`source-hero${displayTitle.length > 55 ? " source-hero--long" : ""}`}>
           <div className="source-hero-copy">
             <h1>{displayTitle}</h1>
-            <p className="source-hero-lead">{sanitizeText(page.description)}</p>
+            <p className="source-hero-lead">
+              {structuredContent?.intro[0] ?? sanitizeText(page.description)}
+            </p>
             <div className="source-actions">
               <a className="button button--green" href={phoneHref}>
                 Позвонить <span aria-hidden="true">↗</span>
@@ -393,21 +539,30 @@ export default async function ImportedSourcePage({
                   выбранной модели. Уточните расчёт по телефону.
                 </p>
               </div>
+            ) : structuredContent ? (
+              <StructuredContent
+                content={structuredContent}
+                images={structuredImages}
+                title={displayTitle}
+              />
             ) : (
-              content.map((block, index) => {
-                if (block.kind === "heading") {
-                  return <h2 key={`${block.text}-${index}`}>{block.text}</h2>;
-                }
-                if (block.kind === "list") {
-                  return (
-                    <div className="source-list-item" key={`${block.text}-${index}`}>
-                      <span aria-hidden="true" />
-                      <p>{block.text}</p>
-                    </div>
-                  );
-                }
-                return <p key={`${block.text}-${index}`}>{block.text}</p>;
-              })
+              <>
+                {content.map((block, index) => {
+                  if (block.kind === "heading") {
+                    return <h2 key={`${block.text}-${index}`}>{block.text}</h2>;
+                  }
+                  if (block.kind === "list") {
+                    return (
+                      <div className="source-list-item" key={`${block.text}-${index}`}>
+                        <span aria-hidden="true" />
+                        <p>{block.text}</p>
+                      </div>
+                    );
+                  }
+                  return <p key={`${block.text}-${index}`}>{block.text}</p>;
+                })}
+                <InlineMedia images={inlineImages} title={displayTitle} />
+              </>
             )}
           </article>
         </section>
