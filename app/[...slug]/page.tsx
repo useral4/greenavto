@@ -3,7 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CatalogCalculator } from "../components/catalog-calculator";
 import { SiteNavigationLinks } from "../components/services-menu";
-import { categories, equipment } from "../data/lifts";
+import {
+  categories,
+  equipment,
+  getLiftPrice,
+  liftPriceList,
+} from "../data/lifts";
 import { serviceItems } from "../data/services";
 import sourceData from "../data/source-pages.json";
 import {
@@ -104,22 +109,6 @@ const fallbackImages: Record<SourcePage["type"], SourceImage> = {
   },
 };
 
-const priceRows = [
-  ["12 м", "1 375 ₽", "11 000 ₽", "50 ₽"],
-  ["15 м", "1 450 ₽", "11 600 ₽", "50 ₽"],
-  ["18 м", "1 500 ₽", "12 000 ₽", "50 ₽"],
-  ["22 м", "1 750 ₽", "14 000 ₽", "50 ₽"],
-  ["24 м", "1 875 ₽", "15 000 ₽", "50 ₽"],
-  ["25 м", "1 875 ₽", "15 000 ₽", "50 ₽"],
-  ["28 м", "2 000 ₽", "16 000 ₽", "50 ₽"],
-  ["30 м", "2 000 ₽", "18 000 ₽", "50 ₽"],
-  ["32 м", "2 125 ₽", "19 500 ₽", "50 ₽"],
-  ["35 м", "2 250 ₽", "20 000 ₽", "50 ₽"],
-  ["40 м", "2 750 ₽", "24 000 ₽", "50 ₽"],
-  ["45 м", "3 000 ₽", "26 000 ₽", "50 ₽"],
-  ["50 м", "4 000 ₽", "40 000 ₽", "50 ₽"],
-] as const;
-
 function sanitizeText(text: string) {
   return text
     .replace(/[█▀▄▌▐░▒▓▬]+/g, " ")
@@ -161,6 +150,15 @@ function cleanTitle(title: string) {
   return sanitizeText(title)
     .split("|")[0]
     .replace(/\s+[–—-]\s+(Грин ?Авто|ГРИНАВТО).*$/i, "")
+    .replace(/[,\s]+\d[\d\s]*\s*(?:руб\.?|₽)(?:\/смена)?/gi, "")
+    .replace(/\s+[–—-]\s*Санкт-Петербург$/i, "")
+    .trim();
+}
+
+function cleanImageAlt(alt: string) {
+  return sanitizeText(alt)
+    .replace(/[,\s]+\d[\d\s]*\s*(?:руб\.?|₽)(?:\/смена)?/gi, "")
+    .replace(/\s+[–—-]\s*Санкт-Петербург$/i, "")
     .trim();
 }
 
@@ -192,11 +190,16 @@ function isBreadcrumb(block: ContentBlock) {
 
 function contentFor(page: SourcePage, displayTitle: string) {
   let skippedTitle = false;
+  const isLiftDetail = /\/katalog-tekhniki\/avtovyshki\/arenda-avtovyshki-\d+m$/.test(
+    page.path,
+  );
+  const stalePrice = /(?:11 000|11 600|12 000|14 000|15 000|16 000|18 000|19 500|20 000|24 000|26 000|40 000)\s*₽/;
   return page.blocks
     .map((block) => ({ ...block, text: sanitizeText(block.text) }))
     .filter((block) => {
     if (isBreadcrumb(block)) return false;
     if (mentionsRemovedDirection(block.text)) return false;
+    if (isLiftDetail && stalePrice.test(block.text)) return false;
     if (
       !skippedTitle &&
       block.kind === "heading" &&
@@ -215,11 +218,13 @@ function imagesFor(page: SourcePage) {
   }
 
   const seen = new Set<string>();
-  const images = page.images.filter((image) => {
-    if (utilityImages.has(image.src) || seen.has(image.src)) return false;
-    seen.add(image.src);
-    return true;
-  });
+  const images = page.images
+    .filter((image) => {
+      if (utilityImages.has(image.src) || seen.has(image.src)) return false;
+      seen.add(image.src);
+      return true;
+    })
+    .map((image) => ({ ...image, alt: cleanImageAlt(image.alt) }));
 
   if (page.path === "/services") {
     return [
@@ -471,7 +476,7 @@ function CatalogIndex() {
               <div>
                 <h3>{category.name}</h3>
                 <p>
-                  от {category.pricePerHour.toLocaleString("ru-RU")} ₽/ч
+                  от {category.priceFromShift.toLocaleString("ru-RU")} ₽/смена
                 </p>
                 <span>Подробнее ↗︎</span>
               </div>
@@ -514,7 +519,11 @@ function CatalogIndex() {
                   ))}
                 </dl>
                 <footer>
-                  <strong>от {item.price.toLocaleString("ru-RU")} ₽</strong>
+                  <strong>
+                    {item.price
+                      ? `от ${item.price.toLocaleString("ru-RU")} ₽/смена`
+                      : "Цена по запросу"}
+                  </strong>
                   <Link href={item.href}>Заказать ↗︎</Link>
                 </footer>
               </div>
@@ -637,6 +646,10 @@ export default async function ImportedSourcePage({
   const isCatalogIndex = page.path === "/katalog-tekhniki";
   const isServicesIndex = page.path === "/services";
   const isPricePage = page.path === "/price";
+  const liftHeightMatch = page.path.match(/arenda-avtovyshki-(\d+)m$/);
+  const currentLiftPrice = liftHeightMatch
+    ? getLiftPrice(Number(liftHeightMatch[1]))
+    : undefined;
   const visibleRelated = isServicesIndex
     ? related.filter(
         (item) => !serviceItems.some((service) => service.href === item.path),
@@ -649,7 +662,7 @@ export default async function ImportedSourcePage({
         <Link className="brand source-brand" href="/" aria-label="ГРИНАВТО — на главную">
           <img
             className="brand-logo"
-            src="/brand-clover.webp"
+            src="/brand-clover-transparent.png"
             width="48"
             height="48"
             alt=""
@@ -719,6 +732,22 @@ export default async function ImportedSourcePage({
           <span><strong>1 звонок</strong> для подбора автовышки</span>
         </div>
 
+        {currentLiftPrice && (
+          <section className="source-current-prices" aria-label={`Актуальные цены: ${currentLiftPrice.height}`}>
+            <div>
+              <span>Шоссейная</span>
+              <strong>{currentLiftPrice.roadShift.toLocaleString("ru-RU")} ₽/смена</strong>
+              <small>за КАД — {currentLiftPrice.roadOutsideKad} ₽/км</small>
+            </div>
+            <div>
+              <span>Вездеход</span>
+              <strong>{currentLiftPrice.allTerrainShift.toLocaleString("ru-RU")} ₽/смена</strong>
+              <small>за КАД — {currentLiftPrice.allTerrainOutsideKad} ₽/км</small>
+            </div>
+            <p>Смена 7+1 · НДС 22% включён</p>
+          </section>
+        )}
+
         {isServicesIndex && (
           <section className="source-services-index" aria-labelledby="services-index-title">
             <div className="source-services-heading">
@@ -756,36 +785,52 @@ export default async function ImportedSourcePage({
               <div className="source-price">
                 <h2>Прайс-лист аренды автовышек</h2>
                 <p>
-                  Стоимость указана без НДС. Минимальный заказ — одна смена.
+                  Стоимость одной машино-смены 7+1 указана с НДС 22%.
+                  Пробег за пределами КАД рассчитывается за каждый километр.
                 </p>
-                <div className="source-price-table-wrap">
-                  <table className="source-price-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Высота подъёма</th>
-                        <th scope="col">После смены, за час</th>
-                        <th scope="col">За смену</th>
-                        <th scope="col">За КАД, 1 км</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {priceRows.map((row) => (
-                        <tr key={row[0]}>
-                          {row.map((cell, index) =>
-                            index === 0 ? (
-                              <th scope="row" key={cell}>{cell}</th>
-                            ) : (
-                              <td key={cell}>{cell}</td>
-                            ),
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="source-price-groups">
+                  {[
+                    {
+                      title: "Шоссейные",
+                      shiftKey: "roadShift" as const,
+                      distanceKey: "roadOutsideKad" as const,
+                    },
+                    {
+                      title: "Вездеходы",
+                      shiftKey: "allTerrainShift" as const,
+                      distanceKey: "allTerrainOutsideKad" as const,
+                    },
+                  ].map((group) => (
+                    <section className="source-price-group" key={group.title}>
+                      <h3>{group.title}</h3>
+                      <div className="source-price-table-wrap">
+                        <table className="source-price-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Высота</th>
+                              <th scope="col">Описание</th>
+                              <th scope="col">Смена 7+1</th>
+                              <th scope="col">За КАД</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {liftPriceList.map((row) => (
+                              <tr key={`${group.title}-${row.height}`}>
+                                <th scope="row">{row.height}</th>
+                                <td>{row.description}</td>
+                                <td>{row[group.shiftKey].toLocaleString("ru-RU")} ₽</td>
+                                <td>{row[group.distanceKey]} ₽/км</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  ))}
                 </div>
                 <p className="source-price-note">
-                  Точная стоимость зависит от адреса объекта, срока аренды и
-                  выбранной модели. Уточните расчёт по телефону.
+                  Для высот и конфигураций, которых нет в таблице, стоимость
+                  рассчитывается индивидуально. Уточните тип шасси и адрес у менеджера.
                 </p>
               </div>
             ) : structuredContent ? (
@@ -859,7 +904,7 @@ export default async function ImportedSourcePage({
           <Link className="brand" href="/">
             <img
               className="brand-logo"
-              src="/brand-clover.webp"
+              src="/brand-clover-transparent.png"
               width="48"
               height="48"
               alt=""

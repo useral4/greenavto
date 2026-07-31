@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, MouseEvent, useEffect, useState } from "react";
 import { SiteNavigationLinks } from "./components/services-menu";
-import { equipment } from "./data/lifts";
+import { equipment, liftPriceList } from "./data/lifts";
 import { serviceItems } from "./data/services";
 
 const phoneDisplay = "+7 (999) 008-88-84";
@@ -14,11 +14,11 @@ const email = "greenavtospb@mail.ru";
 
 const liftEquipment = equipment.filter((item) => item.kind === "lift");
 const featuredLiftIds = new Set([
-  "lift-12",
   "lift-18",
+  "lift-22",
+  "lift-24",
   "lift-28",
   "lift-45",
-  "lift-50",
 ]);
 const featuredLiftEquipment = liftEquipment.filter((item) =>
   featuredLiftIds.has(item.id),
@@ -56,21 +56,25 @@ const companyFacts = [
 
 const testimonials = [
   {
-    image: "/content/review-alpha.webp",
-    alt: "Егоров Семен, директор ООО «Альфа Групп»",
-    title: "Высокий уровень профессионализма",
-    text: "Компания «Альфа Групп» выражает искреннюю благодарность «ГринАвто» за длительное и взаимовыгодное сотрудничество. Благодарим за индивидуальный подход, высокий уровень профессионализма и оперативность.",
-    name: "Егоров Семен",
-    role: "Директор ООО «Альфа Групп»",
+    text: "Я арендовал автовышку у них и был очень доволен. Сотрудники были очень дружелюбны и помогли выбрать подходящую модель. Работа была выполнена без проблем.",
+    name: "Кирилл Яковлев",
   },
   {
-    image: "/content/review-antarkt.webp",
-    alt: "Желяев Андрей, директор ООО «Антаркт»",
-    title: "Всё сделали раньше срока",
-    text: "Хотелось бы поблагодарить команду «ГринАвто» за ответственное отношение к работе: всё сделали раньше назначенного срока и учли пожелания. Большое спасибо — мы очень довольны.",
-    name: "Желяев Андрей",
-    role: "Директор ООО «Антаркт»",
+    text: "Это надёжная компания, у них я арендовала автовышку для ремонта моего дома. Сотрудники быстро оформили все документы, и автовышка была в идеальном состоянии.",
+    name: "Александра Сомова",
   },
+  {
+    text: "Они предоставляют отличный сервис! Я арендовала у них автовышку для обрезки деревьев в моём саду. Всё прошло гладко, автовышка была доставлена вовремя, а сотрудники — профессионалы своего дела.",
+    name: "Агата Ягудина",
+  },
+];
+
+const marqueeItems = [
+  "АРЕНДА АВТОВЫШЕК",
+  "САНКТ-ПЕТЕРБУРГ И ЛО",
+  "СВОЕВРЕМЕННАЯ ПОДАЧА",
+  "ВЫСОТА ОТ 12 ДО 60 М",
+  "ШОССЕЙНЫЕ И ВЕЗДЕХОДНЫЕ",
 ];
 
 const featuredArticles = [
@@ -191,6 +195,15 @@ export default function Home() {
     setCookieOpen(false);
   }
 
+  function scrollToRequest(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    const requestSection = document.getElementById("request");
+    if (!requestSection) return;
+
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    requestSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <>
       <script
@@ -202,7 +215,7 @@ export default function Home() {
         <Link className="brand brand--header" href="/" aria-label="ГРИНАВТО — на главную">
           <img
             className="brand-logo"
-            src="/brand-clover.webp"
+            src="/brand-clover-transparent.png"
             width="48"
             height="48"
             alt=""
@@ -219,7 +232,7 @@ export default function Home() {
           <a className="nav-phone" href={phoneHref}>{phoneDisplay}</a>
         </nav>
 
-        <a className="header-cta" href="#request">
+        <a className="header-cta" href="#request" onClick={scrollToRequest}>
           Рассчитать стоимость <span aria-hidden="true">↗︎</span>
         </a>
 
@@ -257,7 +270,7 @@ export default function Home() {
               Санкт-Петербурга и Ленинградской области.
             </p>
             <div className="hero-actions">
-              <a className="button button--green" href="#request">
+              <a className="button button--green" href="#request" onClick={scrollToRequest}>
                 Подобрать автовышку <span aria-hidden="true">↗︎</span>
               </a>
               <a className="text-link text-link--light" href={phoneHref}>
@@ -284,11 +297,13 @@ export default function Home() {
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
-            <span>АРЕНДА АВТОВЫШЕК</span><i>↗︎</i>
-            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗︎</i>
-            <span>СВОЕВРЕМЕННАЯ ПОДАЧА</span><i>↗︎</i>
-            <span>АРЕНДА АВТОВЫШЕК</span><i>↗︎</i>
-            <span>САНКТ-ПЕТЕРБУРГ И ЛО</span><i>↗︎</i>
+            {[0, 1].map((group) => (
+              <div className="marquee-group" key={group}>
+                {marqueeItems.map((item) => (
+                  <span key={`${group}-${item}`}>{item}<i>↗︎</i></span>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -369,7 +384,11 @@ export default function Home() {
                 <div>
                   <p>{item.shortSpec}</p>
                   <h3>{item.name}</h3>
-                  <strong>от {item.price.toLocaleString("ru-RU")} ₽/смена</strong>
+                  <strong>
+                    {item.price
+                      ? `от ${item.price.toLocaleString("ru-RU")} ₽/смена`
+                      : "Цена по запросу"}
+                  </strong>
                   <i aria-hidden="true">↗︎</i>
                 </div>
               </Link>
@@ -407,7 +426,11 @@ export default function Home() {
                     ))}
                     <div><dt>Доставка</dt><dd>договорная</dd></div>
                   </dl>
-                  <p className="model-price">от {item.price.toLocaleString("ru-RU")} ₽</p>
+                  <p className="model-price">
+                    {item.price
+                      ? `от ${item.price.toLocaleString("ru-RU")} ₽/смена`
+                      : "Цена по запросу"}
+                  </p>
                   <Link className="card-link" href={item.href}>Подробнее <span>↗︎</span></Link>
                 </div>
               </article>
@@ -544,7 +567,7 @@ export default function Home() {
         <section className="reviews-section" aria-labelledby="reviews-title">
           <div className="reviews-head">
             <p className="eyebrow">Отзывы клиентов</p>
-            <h2 id="reviews-title">Нам доверяют<br /><em>1 988 клиентов</em></h2>
+            <h2 id="reviews-title">Что говорят<br /><em>наши клиенты</em></h2>
             <Link className="text-link" href="/o-kompanii/otzyvy-o-nas">
               Все отзывы <span aria-hidden="true">→</span>
             </Link>
@@ -552,23 +575,12 @@ export default function Home() {
           <div className="reviews-grid">
             {testimonials.map((review, index) => (
               <article key={review.name}>
-                <div className="review-photo">
-                  <img
-                    src={review.image}
-                    width="900"
-                    height="1100"
-                    loading="lazy"
-                    decoding="async"
-                    alt={review.alt}
-                  />
-                  <span>0{index + 1}</span>
-                </div>
+                <span className="review-index">0{index + 1}</span>
                 <div className="review-copy">
                   <p className="review-mark" aria-hidden="true">“</p>
-                  <h3>{review.title}</h3>
                   <blockquote>{review.text}</blockquote>
                   <strong>{review.name}</strong>
-                  <small>{review.role}</small>
+                  <small>Клиент ГРИНАВТО</small>
                 </div>
               </article>
             ))}
@@ -582,24 +594,31 @@ export default function Home() {
               <h2>Честный расчёт<br /><em>под объект</em></h2>
             </div>
             <p className="section-intro">
-              Используем цены из действующего каталога. Доставка рассчитывается
-              отдельно и согласовывается до подачи техники.
+              Смена 7+1, цены указаны с НДС 22%. Стоимость пробега за КАД
+              зависит от типа автовышки.
             </p>
           </div>
-          <div className="price-table">
-            {liftEquipment.map((item, index) => (
-              <div className="price-row" key={item.id}>
-                <span>0{index + 1}</span>
-                <h3>{item.name}</h3>
-                <p>{item.shortSpec}</p>
-                <strong>от {item.price.toLocaleString("ru-RU")} ₽</strong>
-                <a href="#request" aria-label={`Узнать стоимость: ${item.name}`}>↗︎</a>
+          <div className="price-table price-table--current">
+            <div className="price-row price-row--head" aria-hidden="true">
+              <span>Высота</span>
+              <h3>Шоссейная / смена</h3>
+              <p>Вездеход / смена</p>
+              <strong>За КАД</strong>
+              <i />
+            </div>
+            {liftPriceList.map((item) => (
+              <div className="price-row" key={item.height}>
+                <span>{item.height}</span>
+                <h3>{item.roadShift.toLocaleString("ru-RU")} ₽</h3>
+                <p>{item.allTerrainShift.toLocaleString("ru-RU")} ₽</p>
+                <strong>{item.roadOutsideKad}–{item.allTerrainOutsideKad} ₽/км</strong>
+                <a href="#request" onClick={scrollToRequest} aria-label={`Узнать стоимость: автовышка ${item.height}`}>↗︎</a>
               </div>
             ))}
           </div>
           <p className="price-note">
-            На расчёт влияют выбранная модель, продолжительность аренды,
-            удалённость объекта, сложность подъезда и доставка.
+            Шоссейные автовышки — от 20 000 ₽ за смену, вездеходные — от 24 000 ₽.
+            Точный расчёт зависит от адреса, типа шасси и условий подъезда.
           </p>
         </section>
 
@@ -677,7 +696,7 @@ export default function Home() {
           <Link className="brand" href="/">
             <img
               className="brand-logo"
-              src="/brand-clover.webp"
+              src="/brand-clover-transparent.png"
               width="48"
               height="48"
               alt=""

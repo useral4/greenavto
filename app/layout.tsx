@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description:
     "Аренда автовышек высотой от 12 до 60 метров в Санкт-Петербурге и Ленинградской области. Техника с оператором, заявки 24/7.",
   icons: {
-    icon: "/brand-clover.webp",
-    shortcut: "/brand-clover.webp",
+    icon: "/brand-clover-transparent.png",
+    shortcut: "/brand-clover-transparent.png",
   },
   openGraph: {
     title: "ГРИНАВТО — аренда автовышек в Санкт-Петербурге и ЛО",

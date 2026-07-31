@@ -2,7 +2,7 @@ export type EquipmentCategory = {
   id: string;
   href: string;
   name: string;
-  pricePerHour: number;
+  priceFromShift: number;
   image: string;
   alt: string;
 };
@@ -14,17 +14,97 @@ export type EquipmentProduct = {
   name: string;
   shortSpec: string;
   specs: Array<[string, string]>;
-  price: number;
+  price: number | null;
   image: string;
   alt: string;
 };
+
+export type LiftPriceRow = {
+  height: string;
+  heights: number[];
+  description: string;
+  allTerrainShift: number;
+  allTerrainOutsideKad: number;
+  roadShift: number;
+  roadOutsideKad: number;
+};
+
+export const liftPriceList: LiftPriceRow[] = [
+  {
+    height: "18 м",
+    heights: [18],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 24000,
+    allTerrainOutsideKad: 130,
+    roadShift: 20000,
+    roadOutsideKad: 100,
+  },
+  {
+    height: "22 м",
+    heights: [22],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 25000,
+    allTerrainOutsideKad: 130,
+    roadShift: 22000,
+    roadOutsideKad: 100,
+  },
+  {
+    height: "24 м",
+    heights: [24],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 26000,
+    allTerrainOutsideKad: 130,
+    roadShift: 24000,
+    roadOutsideKad: 120,
+  },
+  {
+    height: "28 м",
+    heights: [28],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 29000,
+    allTerrainOutsideKad: 150,
+    roadShift: 26000,
+    roadOutsideKad: 120,
+  },
+  {
+    height: "30–32 м",
+    heights: [30, 31, 32],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 31000,
+    allTerrainOutsideKad: 150,
+    roadShift: 28000,
+    roadOutsideKad: 130,
+  },
+  {
+    height: "35 м",
+    heights: [35],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 33000,
+    allTerrainOutsideKad: 180,
+    roadShift: 31000,
+    roadOutsideKad: 130,
+  },
+  {
+    height: "45 м",
+    heights: [45],
+    description: "Телескоп, грузоподъёмность 250 кг, поворот корзины 360°",
+    allTerrainShift: 38000,
+    allTerrainOutsideKad: 180,
+    roadShift: 35000,
+    roadOutsideKad: 150,
+  },
+];
+
+export function getLiftPrice(height: number) {
+  return liftPriceList.find((row) => row.heights.includes(height));
+}
 
 export const categories: EquipmentCategory[] = [
   {
     id: "aerial-lifts",
     href: "/katalog-tekhniki/avtovyshki",
     name: "Автовышки",
-    pricePerHour: 1375,
+    priceFromShift: 20000,
     image: "/catalog/lift-28-hq.jpg",
     alt: "Автовышка из парка ГРИНАВТО",
   },
@@ -51,7 +131,7 @@ export const equipment: EquipmentProduct[] = [
       ["Грузоподъёмность", "200 кг"],
       ["Поворот платформы", "220°"],
     ],
-    price: 11000,
+    price: null,
     image: "/source/cfc668039c53031d.webp",
     alt: "Автовышка с рабочей высотой 12 метров",
   },
@@ -62,7 +142,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 15 м",
     shortSpec: "15 м",
     specs: liftSpecs(15),
-    price: 11600,
+    price: null,
     image: "/source/0bd7c0af8ce5f80a.webp",
     alt: "Автовышка ГАЗель Next с рабочей высотой 15 метров",
   },
@@ -73,7 +153,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 17 м",
     shortSpec: "17 м",
     specs: liftSpecs(17),
-    price: 12000,
+    price: null,
     image: "/source/1acb7b310bb675ed.webp",
     alt: "Автовышка с рабочей высотой 17 метров",
   },
@@ -89,7 +169,7 @@ export const equipment: EquipmentProduct[] = [
       ["Шасси", "ГАЗель Next"],
       ["Колёсная формула", "4×2"],
     ],
-    price: 12000,
+    price: 20000,
     image: "/catalog/lift-18-hq.webp",
     alt: "Автовышка 18 метров на шасси ГАЗель Next",
   },
@@ -100,7 +180,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 22 м",
     shortSpec: "22 м",
     specs: liftSpecs(22),
-    price: 14000,
+    price: 22000,
     image: "/source/324af103fd541fcb.webp",
     alt: "Автовышка с рабочей высотой 22 метра",
   },
@@ -111,7 +191,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 24 м",
     shortSpec: "24 м",
     specs: liftSpecs(24),
-    price: 15000,
+    price: 24000,
     image: "/source/b07943c6e0bca7ad.webp",
     alt: "Автовышка Tadano с рабочей высотой 24 метра",
   },
@@ -122,7 +202,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 25 м",
     shortSpec: "25 м",
     specs: liftSpecs(25),
-    price: 15000,
+    price: null,
     image: "/source/13d42843b14bb23f.webp",
     alt: "Автовышка Hyundai с рабочей высотой 25 метров",
   },
@@ -133,7 +213,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 26 м",
     shortSpec: "26 м",
     specs: liftSpecs(26),
-    price: 15000,
+    price: null,
     image: "/source/85d840d7c244cd4c.webp",
     alt: "Автовышка с рабочей высотой 26 метров",
   },
@@ -149,7 +229,7 @@ export const equipment: EquipmentProduct[] = [
       ["Грузоподъёмность", "300 кг"],
       ["Поворот платформы", "220°"],
     ],
-    price: 16000,
+    price: 26000,
     image: "/catalog/lift-28-hq.jpg",
     alt: "Автовышка Daewoo с рабочей высотой 28 метров",
   },
@@ -160,7 +240,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 32 м",
     shortSpec: "32 м",
     specs: liftSpecs(32),
-    price: 19500,
+    price: 28000,
     image: "/source/cb51bdad415f8200.webp",
     alt: "Автовышка с рабочей высотой 32 метра",
   },
@@ -171,7 +251,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 35 м",
     shortSpec: "35 м",
     specs: liftSpecs(35),
-    price: 20000,
+    price: 31000,
     image: "/source/0bc393a2421a4bb4.webp",
     alt: "Автовышка с рабочей высотой 35 метров",
   },
@@ -187,7 +267,7 @@ export const equipment: EquipmentProduct[] = [
       ["Тип стрелы", "телескопическая"],
       ["Поворот платформы", "360°"],
     ],
-    price: 26000,
+    price: 35000,
     image: "/catalog/lift-45-hero-hq.webp",
     alt: "Телескопическая автовышка Daewoo высотой 45 метров",
   },
@@ -203,7 +283,7 @@ export const equipment: EquipmentProduct[] = [
       ["Грузоподъёмность", "300 кг"],
       ["Поворот платформы", "360°"],
     ],
-    price: 40000,
+    price: null,
     image: "/source/8d81d992bb9b3ea8.webp",
     alt: "Высотная автомобильная вышка с рабочей высотой 50 метров",
   },
@@ -214,7 +294,7 @@ export const equipment: EquipmentProduct[] = [
     name: "Автовышка 60 м",
     shortSpec: "60 м",
     specs: liftSpecs(60),
-    price: 40000,
+    price: null,
     image: "/source/b9756bf00221b1bd.webp",
     alt: "Высотная автомобильная вышка с рабочей высотой 60 метров",
   },

@@ -419,7 +419,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
         name: "Автомобильная вышка 12 м",
         image: "/catalog/lift-12.webp",
         alt: "Автовышка с рабочей высотой 12 метров",
-        price: "от 11 000 ₽/смена",
+        price: "цена по запросу",
         specs: [
           ["Рабочая высота", "12 м"],
           ["Рабочий радиус", "6 м"],
@@ -431,7 +431,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
         name: "Автомобильная вышка 28 м",
         image: "/catalog/lift-28.webp",
         alt: "Автовышка с рабочей высотой 28 метров",
-        price: "от 16 000 ₽/смена",
+        price: "от 26 000 ₽/смена",
         specs: [
           ["Рабочая высота", "28 м"],
           ["Рабочий радиус", "15 м"],
@@ -443,7 +443,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
         name: "Автомобильная вышка 50 м",
         image: "/catalog/lift-50.webp",
         alt: "Автовышка с рабочей высотой 50 метров",
-        price: "от 40 000 ₽/смена",
+        price: "цена по запросу",
         specs: [
           ["Рабочая высота", "50 м"],
           ["Рабочий радиус", "26 м"],
@@ -878,7 +878,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
     highlights: [
       ["Рабочая высота", "12 м"],
       ["Грузоподъёмность люльки", "200 кг"],
-      ["Стоимость смены", "от 11 000 ₽"],
+      ["Стоимость смены", "по запросу"],
     ],
     sections: [
       {
@@ -922,7 +922,7 @@ export const structuredPages: Record<string, StructuredPageContent> = {
     highlights: [
       ["Рабочая высота", "45 м"],
       ["Грузоподъёмность люльки", "до 300 кг"],
-      ["Стоимость смены", "от 26 000 ₽"],
+      ["Стоимость смены", "от 35 000 ₽"],
     ],
     sections: [
       {

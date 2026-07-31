@@ -116,11 +116,22 @@ test("exports every public route as static HTML", async () => {
   }
 
   const home = await readStaticPage("index.html");
+  const homeText = plainText(home);
   assert.match(home, /<html lang="ru">/);
   assert.match(home, /<title>Аренда автовышек[^<]*ГРИНАВТО<\/title>/);
   assert.match(home, /https:\/\/greenavto\.onrender\.com\/og-green\.png/);
   assert.match(home, /<form class="request-form">/);
   assert.match(home, /Популярные модели/);
+  assert.match(home, /\/brand-clover-transparent\.png/);
+  assert.equal((home.match(/class="marquee-group"/g) ?? []).length, 2);
+  assert.match(home, /Кирилл Яковлев/);
+  assert.match(home, /Александра Сомова/);
+  assert.match(home, /Агата Ягудина/);
+  assert.doesNotMatch(home, /Егоров Семен|Желяев Андрей|review-alpha|review-antarkt/);
+  assert.match(homeText, /20 000 ₽/);
+  assert.match(homeText, /38 000 ₽/);
+  assert.match(home, /Смена 7\+1/);
+  assert.match(home, /НДС 22%/);
   assert.doesNotMatch(home, /На связи круглосуточно/);
   assert.doesNotMatch(home, /Все изображения|из архива|Материалы исходного сайта/);
   for (const route of [...catalogMenuRoutes, ...serviceRoutes]) {
@@ -168,9 +179,16 @@ test("exports every public route as static HTML", async () => {
   assert.match(serviceDetail, /\/catalog\/lift-28-hq\.jpg/);
 
   const price = await readStaticPage("price/index.html");
+  const priceText = plainText(price);
   assert.match(price, /class="source-price-table"/);
-  assert.match(price, /12 м/);
-  assert.match(price, /50 м/);
+  assert.match(price, /Шоссейные/);
+  assert.match(price, /Вездеходы/);
+  assert.match(price, /18 м/);
+  assert.match(price, /45 м/);
+  assert.match(priceText, /20 000 ₽/);
+  assert.match(priceText, /38 000 ₽/);
+  assert.match(price, /22%/);
+  assert.doesNotMatch(priceText, /11 000 ₽|без НДС/i);
   assert.doesNotMatch(
     price,
     /Введите ваш номер, чтобы мы отправили вам каталог в Whatsapp/i,
@@ -203,12 +221,16 @@ test("exports every public route as static HTML", async () => {
   );
   assert.match(lift12, /class="source-highlights"/);
   assert.match(lift12, /class="source-inline-media/);
+  assert.match(lift12, /по запросу/);
+  assert.doesNotMatch(plainText(lift12), /11 000 ₽/);
 
   const lift45 = await readStaticPage(
     "katalog-tekhniki/avtovyshki/arenda-avtovyshki-45m/index.html",
   );
   assert.match(lift45, /\/catalog\/lift-45-hero-hq\.webp/);
   assert.match(lift45, /\/catalog\/lift-45-work-hq\.webp/);
+  assert.match(plainText(lift45), /35 000 ₽\/смена/);
+  assert.match(plainText(lift45), /38 000 ₽\/смена/);
   assert.doesNotMatch(
     lift45,
     /\/source\/(?:13d0266a29b30ab9|5dfa1575e220882c)\.webp/,
@@ -218,6 +240,11 @@ test("exports every public route as static HTML", async () => {
     page.startsWith("katalog-tekhniki/avtovyshki/arenda-avtovyshki-"),
   )) {
     const html = await readStaticPage(pagePath);
+    assert.doesNotMatch(
+      html,
+      /(?:11000|11600|12000|14000|15000|16000|19500|20000|26000|40000)\s*руб\/?смена/i,
+      `Stale price on ${pagePath}`,
+    );
     assert.doesNotMatch(
       html,
       /\/source\/(?:13d0266a29b30ab9|5dfa1575e220882c|a0763f24b291e1a6|aa1095c4c14de397)\.webp/,
