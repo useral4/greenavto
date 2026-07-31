@@ -596,7 +596,7 @@ h2 em {
   display: flex;
   width: max-content;
   align-items: center;
-  animation: marquee 16s linear infinite;
+  animation: marquee 8s linear infinite;
 }
 
 .marquee-group {
