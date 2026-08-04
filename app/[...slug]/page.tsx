@@ -73,7 +73,6 @@ const pages = (sourceData.pages as SourcePage[]).filter((page) =>
 );
 const phoneDisplay = "+7 (999) 008-88-84";
 const phoneHref = "tel:+79990088884";
-const whatsappHref = "https://wa.me/79990088884";
 const telegramHref = "https://t.me/generalsite";
 const maxHref = "https://max.ru/u/f9LHodD0cOIbLtf3CQhsQjragtu3Gs5BSnbQzf3nnoDGyP_6RFOj5mZD95s";
 const email = "greenavtospb@mail.ru";
@@ -701,14 +700,6 @@ export default async function ImportedSourcePage({
               </a>
               <a
                 className="button source-button-outline"
-                href={whatsappHref}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Написать в WhatsApp <span aria-hidden="true">↗︎</span>
-              </a>
-              <a
-                className="button source-button-outline"
                 href={maxHref}
                 target="_blank"
                 rel="noreferrer"
@@ -897,10 +888,7 @@ export default async function ImportedSourcePage({
             <a href={phoneHref}>{phoneDisplay}</a>
             <p>Позвоните или напишите — уточним задачу, подберём модель и рассчитаем стоимость.</p>
             <div className="source-actions">
-              <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">
-                WhatsApp ↗︎
-              </a>
-              <a className="button source-button-outline" href={maxHref} target="_blank" rel="noreferrer">
+              <a className="button button--green" href={maxHref} target="_blank" rel="noreferrer">
                 MAX ↗︎
               </a>
               <a className="button source-button-outline" href={telegramHref} target="_blank" rel="noreferrer">
@@ -947,7 +935,6 @@ export default async function ImportedSourcePage({
           <strong>Контакты</strong>
           <a href={phoneHref}>{phoneDisplay}</a>
           <a href={`mailto:${email}`}>{email}</a>
-          <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
           <a href={maxHref} target="_blank" rel="noreferrer">MAX</a>
           <Link href="/privacy">Политика конфиденциальности</Link>
           <Link href="/consent">Согласие на обработку данных</Link>
@@ -959,7 +946,6 @@ export default async function ImportedSourcePage({
       </footer>
       <div className="mobile-actions" aria-label="Быстрые действия">
         <a href={phoneHref}>Позвонить</a>
-        <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
         <a href={maxHref} target="_blank" rel="noreferrer">MAX</a>
         <a href="/#request">Расчёт</a>
       </div>

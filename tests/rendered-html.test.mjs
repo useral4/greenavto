@@ -111,6 +111,7 @@ test("exports every public route as static HTML", async () => {
   );
   for (const pagePath of publicPagePaths) {
     const html = await readStaticPage(pagePath);
+    assert.doesNotMatch(html, /WhatsApp|wa\.me/i, `WhatsApp remains on ${pagePath}`);
     assert.doesNotMatch(
       html,
       /\u2197(?!\uFE0E)/u,
