@@ -10,6 +10,7 @@ const phoneDisplay = "+7 (999) 008-88-84";
 const phoneHref = "tel:+79990088884";
 const whatsappHref = "https://wa.me/79990088884";
 const telegramHref = "https://t.me/generalsite";
+const maxHref = "https://max.ru/u/f9LHodD0cOIbLtf3CQhsQjragtu3Gs5BSnbQzf3nnoDGyP_6RFOj5mZD95s";
 const email = "greenavtospb@mail.ru";
 
 const liftEquipment = equipment.filter((item) => item.kind === "lift");
@@ -681,6 +682,7 @@ export default function Home() {
             </p>
             <div className="contact-actions">
               <a className="button button--green" href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp ↗︎</a>
+              <a className="button button--outline" href={maxHref} target="_blank" rel="noreferrer">MAX ↗︎</a>
               <a className="button button--outline" href={telegramHref} target="_blank" rel="noreferrer">Telegram ↗︎</a>
             </div>
           </div>
@@ -720,6 +722,8 @@ export default function Home() {
           <strong>Контакты</strong>
           <a href={phoneHref}>{phoneDisplay}</a>
           <a href={`mailto:${email}`}>{email}</a>
+          <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href={maxHref} target="_blank" rel="noreferrer">MAX</a>
           <a href={telegramHref} target="_blank" rel="noreferrer">Telegram</a>
         </div>
         <div className="footer-column">
@@ -737,6 +741,7 @@ export default function Home() {
       <div className="mobile-actions" aria-label="Быстрые действия">
         <a href={phoneHref}>Позвонить</a>
         <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
+        <a href={maxHref} target="_blank" rel="noreferrer">MAX</a>
         <a href="#request">Расчёт</a>
       </div>
 

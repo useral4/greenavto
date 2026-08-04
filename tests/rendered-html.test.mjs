@@ -98,6 +98,9 @@ const publicPagePaths = [
   ...sourcePagePaths,
 ];
 
+const maxHref =
+  "https://max.ru/u/f9LHodD0cOIbLtf3CQhsQjragtu3Gs5BSnbQzf3nnoDGyP_6RFOj5mZD95s";
+
 async function readStaticPage(relativePath) {
   return readFile(path.join(staticRoot, relativePath), "utf8");
 }
@@ -123,6 +126,7 @@ test("exports every public route as static HTML", async () => {
   assert.match(home, /<form class="request-form">/);
   assert.match(home, /Популярные модели/);
   assert.match(home, /\/brand-clover-transparent\.png/);
+  assert.match(home, new RegExp(maxHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.equal((home.match(/class="marquee-group"/g) ?? []).length, 2);
   assert.match(home, /Кирилл Яковлев/);
   assert.match(home, /Александра Сомова/);
@@ -177,6 +181,10 @@ test("exports every public route as static HTML", async () => {
     "services/arenda-avtovyshek/index.html",
   );
   assert.match(serviceDetail, /\/catalog\/lift-28-hq\.jpg/);
+  assert.match(
+    serviceDetail,
+    new RegExp(maxHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+  );
 
   const price = await readStaticPage("price/index.html");
   const priceText = plainText(price);
