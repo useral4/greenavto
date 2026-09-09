@@ -699,6 +699,16 @@ h2 em {
   background: var(--mist);
 }
 
+.form-honeypot {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .request-form label:not(.consent) {
   display: grid;
   gap: 10px;
@@ -773,6 +783,16 @@ h2 em {
   background: rgba(53, 201, 111, 0.12);
   font-size: 13px;
   line-height: 1.5;
+}
+
+.form-status--error {
+  border-left-color: #b42318;
+  background: rgba(180, 35, 24, 0.1);
+}
+
+.request-form button:disabled {
+  cursor: wait;
+  opacity: 0.68;
 }
 
 .catalog-section {
@@ -2896,6 +2916,40 @@ h2 em {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.general-site-credit {
+  grid-column: 1 / -1;
+  padding-top: 22px;
+  border-top: 1px solid var(--line-dark);
+}
+
+.general-site-credit a {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  color: rgba(247, 248, 244, 0.72);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.general-site-credit img {
+  display: block;
+  width: 134px;
+  height: 83px;
+  object-fit: contain;
+}
+
+.general-site-credit a:hover {
+  color: var(--green);
+}
+
+.legal-page > .general-site-credit {
+  max-width: 1120px;
+  margin: 54px auto 0;
+  padding: 26px clamp(24px, 5vw, 64px);
+  border-top-color: rgba(9, 11, 10, 0.14);
+  background: var(--ink);
 }
 
 .source-nav a {

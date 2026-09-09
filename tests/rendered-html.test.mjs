@@ -100,6 +100,9 @@ const publicPagePaths = [
 
 const maxHref =
   "https://max.ru/u/f9LHodD0cOIbLtf3CQhsQjragtu3Gs5BSnbQzf3nnoDGyP_6RFOj5mZD95s";
+const generalSiteHref = "https://general-site.ru";
+const generalSiteLogo =
+  "https://general-site.ru/images/site/%D0%BB%D0%BE%D0%B3%D0%BE.svg";
 
 async function readStaticPage(relativePath) {
   return readFile(path.join(staticRoot, relativePath), "utf8");
@@ -125,6 +128,10 @@ test("exports every public route as static HTML", async () => {
   assert.match(home, /<title>Аренда автовышек[^<]*ГРИНАВТО<\/title>/);
   assert.match(home, /https:\/\/greenavto\.onrender\.com\/og-green\.png/);
   assert.match(home, /<form class="request-form">/);
+  assert.match(home, /name="company"/);
+  assert.match(home, /Создание и продвижение сайта General-site/);
+  assert.match(home, new RegExp(generalSiteHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(home, new RegExp(generalSiteLogo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   assert.match(home, /Популярные модели/);
   assert.match(home, /\/brand-clover-transparent\.png/);
   assert.match(home, new RegExp(maxHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
@@ -182,6 +189,7 @@ test("exports every public route as static HTML", async () => {
     "services/arenda-avtovyshek/index.html",
   );
   assert.match(serviceDetail, /\/catalog\/lift-28-hq\.jpg/);
+  assert.match(serviceDetail, /Создание и продвижение сайта General-site/);
   assert.match(
     serviceDetail,
     new RegExp(maxHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
@@ -202,6 +210,11 @@ test("exports every public route as static HTML", async () => {
     price,
     /Введите ваш номер, чтобы мы отправили вам каталог в Whatsapp/i,
   );
+
+  for (const legalPage of ["privacy/index.html", "consent/index.html"]) {
+    const legalHtml = await readStaticPage(legalPage);
+    assert.match(legalHtml, /Создание и продвижение сайта General-site/);
+  }
 
   const reviews = await readStaticPage(
     "o-kompanii/otzyvy-o-nas/index.html",

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, MouseEvent, useEffect, useState } from "react";
+import { GeneralSiteCredit } from "./components/general-site-credit";
 import { SiteNavigationLinks } from "./components/services-menu";
 import { equipment, liftPriceList } from "./data/lifts";
 import { serviceItems } from "./data/services";
@@ -179,15 +180,50 @@ const structuredData = {
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const [cookieOpen, setCookieOpen] = useState(false);
 
   useEffect(() => {
     setCookieOpen(localStorage.getItem("greenauto-cookie-choice") === null);
   }, []);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setSubmitted(false);
+    setSubmitError(false);
+    setSubmitting(true);
+
+    try {
+      const endpoint = window.location.hostname.endsWith("onrender.com")
+        ? "https://greenavto.212-193-26-163.nip.io/api/request"
+        : "/api/request";
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: String(formData.get("phone") ?? "").trim(),
+          address: String(formData.get("address") ?? "").trim(),
+          task: String(formData.get("task") ?? "").trim(),
+          company: String(formData.get("company") ?? "").trim(),
+          page: window.location.href,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request delivery failed");
+      }
+
+      form.reset();
+      setSubmitted(true);
+    } catch {
+      setSubmitError(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function saveCookieChoice(choice: "necessary" | "all") {
@@ -319,6 +355,10 @@ export default function Home() {
           </div>
 
           <form className="request-form" onSubmit={handleSubmit}>
+            <label className="form-honeypot" aria-hidden="true">
+              <span>Компания</span>
+              <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+            </label>
             <label>
               <span>Ваш телефон *</span>
               <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required />
@@ -338,13 +378,17 @@ export default function Home() {
                 <Link href="/consent">условия согласия</Link>
               </span>
             </label>
-            <button className="button button--dark form-wide" type="submit">
-              Отправить заявку <span aria-hidden="true">↗︎</span>
+            <button className="button button--dark form-wide" type="submit" disabled={submitting}>
+              {submitting ? "Отправляем..." : "Отправить заявку"} <span aria-hidden="true">↗︎</span>
             </button>
             {submitted && (
               <p className="form-status form-wide" role="status">
-                Заявка подготовлена. В локальной версии отправка не подключена —
-                пожалуйста, позвоните или напишите нам.
+                Заявка отправлена. Мы свяжемся с вами в ближайшее время.
+              </p>
+            )}
+            {submitError && (
+              <p className="form-status form-status--error form-wide" role="alert">
+                Не удалось отправить заявку. Позвоните нам по номеру {phoneDisplay}.
               </p>
             )}
           </form>
@@ -733,6 +777,7 @@ export default function Home() {
           <span>Для запуска необходимо добавить реквизиты оператора данных</span>
           <a href="#top">Наверх ↑</a>
         </div>
+        <GeneralSiteCredit />
       </footer>
 
       <div className="mobile-actions" aria-label="Быстрые действия">

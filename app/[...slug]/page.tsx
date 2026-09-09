@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CatalogCalculator } from "../components/catalog-calculator";
+import { GeneralSiteCredit } from "../components/general-site-credit";
 import { SiteNavigationLinks } from "../components/services-menu";
 import {
   categories,
@@ -943,6 +944,7 @@ export default async function ImportedSourcePage({
           <span>© 2026 ГРИНАВТО</span>
           <Link href="/">На главную ↑</Link>
         </div>
+        <GeneralSiteCredit />
       </footer>
       <div className="mobile-actions" aria-label="Быстрые действия">
         <a href={phoneHref}>Позвонить</a>

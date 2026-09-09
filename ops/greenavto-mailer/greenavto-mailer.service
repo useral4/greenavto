@@ -1,0 +1,20 @@
+[Unit]
+Description=Greenavto website request mailer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+EnvironmentFile=/etc/greenavto-mailer.env
+ExecStart=/usr/bin/python3 /opt/greenavto-mailer/server.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

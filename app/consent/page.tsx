@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GeneralSiteCredit } from "../components/general-site-credit";
 
 export default function ConsentPage() {
   return (
@@ -14,8 +15,7 @@ export default function ConsentPage() {
         <span className="section-kicker">Версия согласия: draft-2026-07</span>
         <h1>Согласие на обработку персональных данных</h1>
         <p className="legal-note">
-          Документ требует заполнения реквизитов оператора и юридического согласования до
-          подключения реального приёма заявок.
+          Документ требует заполнения реквизитов оператора и юридического согласования.
         </p>
         <p>
           Отправляя форму на сайте, пользователь свободно и осознанно даёт согласие
@@ -47,6 +47,7 @@ export default function ConsentPage() {
         </p>
         <Link className="back-link" href="/">← Вернуться на сайт</Link>
       </article>
+      <GeneralSiteCredit />
     </main>
   );
 }
