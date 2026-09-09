@@ -774,7 +774,6 @@ export default function Home() {
         </div>
         <div className="footer-bottom">
           <span>© 2026 ГРИНАВТО</span>
-          <span>Для запуска необходимо добавить реквизиты оператора данных</span>
           <a href="#top">Наверх ↑</a>
         </div>
         <GeneralSiteCredit />

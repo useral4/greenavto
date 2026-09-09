@@ -117,6 +117,11 @@ test("exports every public route as static HTML", async () => {
     assert.doesNotMatch(html, /WhatsApp|wa\.me/i, `WhatsApp remains on ${pagePath}`);
     assert.doesNotMatch(
       html,
+      /для запуска|боевого запуска|демонстрационн(?:ая|ой) версия|draft|реквизиты оператора данных/i,
+      `Draft wording remains on ${pagePath}`,
+    );
+    assert.doesNotMatch(
+      html,
       /\u2197(?!\uFE0E)/u,
       `Emoji-style diagonal arrow on ${pagePath}`,
     );
